@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: vaultra
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: KORAPAY_PUBLIC_KEY
+        sync: false
+      - key: KORAPAY_SECRET_KEY
+        sync: false
+      - key: KORAPAY_ENCRYPTION_KEY
+        sync: false
+      - key: KORAPAY_BASE_URL
+        value: https://api.korapay.com/merchant/api/v1
+      - key: APP_URL
+        sync: false
+      - key: ADMIN_SECRET
+        sync: false
+      - key: STERLING_PRICE_KOBO
+        value: 700000
+      - key: SOVEREIGN_PRICE_KOBO
+        value: 1500000

@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en-NG">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>About VAULTRA Nigeria | Who We Are, Our Mission & Team</title>
+  <meta name="description" content="Learn about VAULTRA Nigeria — the creator monetisation platform helping Nigerian content creators earn Euros. Our mission, our team, and why we built VAULTRA.">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="author" content="VAULTRA Nigeria">
+  <link rel="canonical" href="https://vaultrang.com/about.html">
+
+  <meta property="og:title" content="About VAULTRA Nigeria — Our Mission & Team">
+  <meta property="og:description" content="VAULTRA was founded in Lagos in 2026 to solve one problem: helping Nigerian creators earn in strong currencies. Learn who we are and why we built this platform.">
+  <meta property="og:url" content="https://vaultrang.com/about.html">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://vaultrang.com/images/what-is-vaultra.jpeg">
+  <meta property="og:site_name" content="VAULTRA Nigeria">
+  <meta property="og:locale" content="en_NG">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="About VAULTRA Nigeria — Who We Are">
+  <meta name="twitter:description" content="Founded in Lagos 2026. Built to help Nigerian creators earn Euros.">
+  <meta name="twitter:image" content="https://vaultrang.com/images/what-is-vaultra.jpeg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" type="image/png" href="images/favicon.png">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://vaultrang.com/#organization",
+        "name": "VAULTRA Nigeria",
+        "alternateName": "VAULTRANG",
+        "url": "https://vaultrang.com/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://vaultrang.com/images/favicon.png",
+          "width": 512,
+          "height": 512
+        },
+        "description": "VAULTRA Nigeria is a Lagos-based creator monetisation platform that pays Nigerian content creators in Euros through 6 simultaneous task streams.",
+        "foundingDate": "2026",
+        "foundingLocation": {
+          "@type": "Place",
+          "name": "Lagos, Nigeria",
+          "addressCountry": "NG",
+          "addressLocality": "Lagos"
+        },
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Lagos",
+          "addressCountry": "NG"
+        },
+        "areaServed": {
+          "@type": "Country",
+          "name": "Nigeria"
+        },
+        "contactPoint": [
+          {
+            "@type": "ContactPoint",
+            "contactType": "customer support",
+            "email": "support@vaultrang.com",
+            "availableLanguage": ["en", "yo", "ig", "ha"],
+            "contactOption": "TollFree"
+          }
+        ],
+        "sameAs": [
+          "https://t.me/VAULTRANG"
+        ]
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://vaultrang.com/about.html#webpage",
+        "url": "https://vaultrang.com/about.html",
+        "name": "About VAULTRA Nigeria — Our Mission, Team & Story",
+        "isPartOf": { "@id": "https://vaultrang.com/#website" },
+        "about": { "@id": "https://vaultrang.com/#organization" },
+        "description": "VAULTRA Nigeria was founded in Lagos in 2026 to help Nigerian content creators earn in Euros. Learn about our mission, our team, and how we operate.",
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://vaultrang.com/" },
+            { "@type": "ListItem", "position": 2, "name": "About", "item": "https://vaultrang.com/about.html" }
+          ]
+        }
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    /* ── About page specific styles ── */
+    .about-hero {
+      padding: 140px 40px 80px;
+      background: radial-gradient(ellipse 60% 50% at 50% 30%, rgba(201,168,76,0.07) 0%, transparent 70%);
+      text-align: center;
+    }
+    @media (max-width: 768px) { .about-hero { padding: 110px 20px 60px; } }
+
+    .about-hero-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--gold-dim);
+      border: 1px solid var(--gold-border);
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 7px 16px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+    .about-hero h1 {
+      font-size: clamp(32px, 5vw, 56px);
+      color: var(--text);
+      margin-bottom: 20px;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .about-hero-sub {
+      font-size: 17px;
+      color: var(--text-secondary);
+      max-width: 580px;
+      margin: 0 auto 36px;
+      line-height: 1.75;
+    }
+
+    /* Mission section */
+    .mission-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+    @media (max-width: 900px) { .mission-grid { grid-template-columns: 1fr; gap: 40px; } }
+
+    .mission-text h2 {
+      font-size: clamp(26px, 3.5vw, 38px);
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .mission-text p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+    .mission-stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .mission-stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      transition: var(--transition);
+    }
+    .mission-stat:hover { border-color: var(--gold-border); }
+    .mission-stat-num {
+      font-family: 'Cinzel', sans-serif;
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .mission-stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Values */
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    @media (max-width: 900px) { .values-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 600px) { .values-grid { grid-template-columns: 1fr; } }
+
+    .value-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 24px;
+      transition: var(--transition);
+    }
+    .value-card:hover { border-color: var(--gold-border); transform: translateY(-3px); }
+    .value-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+    }
+    .value-card h3 {
+      font-family: 'Cinzel', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .value-card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* Story timeline */
+    .story-timeline {
+      position: relative;
+      padding-left: 32px;
+      max-width: 640px;
+    }
+    .story-timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: var(--gold-border);
+    }
+    .story-item {
+      position: relative;
+      margin-bottom: 36px;
+    }
+    .story-item:last-child { margin-bottom: 0; }
+    .story-dot {
+      position: absolute;
+      left: -29px;
+      top: 6px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: 2px solid var(--bg);
+      box-shadow: 0 0 0 2px var(--gold-border);
+    }
+    .story-date {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+    .story-item h3 {
+      font-family: 'Cinzel', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .story-item p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* Team */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    @media (max-width: 900px) { .team-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .team-grid { grid-template-columns: 1fr; } }
+
+    .team-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 24px;
+      text-align: center;
+      transition: var(--transition);
+    }
+    .team-card:hover { border-color: var(--gold-border); transform: translateY(-3px); }
+    .team-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--gold-dim);
+      border: 2px solid var(--gold-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--gold);
+      margin: 0 auto 16px;
+    }
+    .team-name {
+      font-family: 'Cinzel', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .team-role {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 10px;
+    }
+    .team-bio {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    /* Contact */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    @media (max-width: 768px) { .contact-grid { grid-template-columns: 1fr; } }
+
+    .contact-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      text-align: center;
+      transition: var(--transition);
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .contact-card:hover { border-color: var(--gold-border); transform: translateY(-2px); }
+    .contact-icon { font-size: 28px; margin-bottom: 12px; }
+    .contact-card h3 {
+      font-family: 'Cinzel', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .contact-card p { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+    .contact-card .contact-link {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gold);
+    }
+
+    /* Legitimacy declaration */
+    .legit-block {
+      background: var(--surface);
+      border: 1px solid var(--gold-border);
+      border-radius: 20px;
+      padding: 36px 40px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    @media (max-width: 600px) { .legit-block { padding: 24px 20px; } }
+    .legit-block h2 {
+      font-size: clamp(22px, 3vw, 30px);
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+    .legit-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .legit-list li {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      padding-left: 14px;
+      border-left: 2px solid var(--gold-border);
+    }
+    .legit-list li strong { color: var(--text); }
+
+    .about-skip { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- ── Navbar ─────────────────────────────────── -->
+  <nav class="navbar" id="navbar" aria-label="Main navigation">
+    <a href="/" class="nav-logo" aria-label="VAULTRA Nigeria home">
+      <div class="nav-logo-icon" aria-hidden="true">✦</div>
+      VAULTRA
+    </a>
+    <div class="nav-links" id="mobileMenu" role="navigation" aria-label="Site links">
+      <a href="index.html#how-it-works">How It Works</a>
+      <a href="index.html#earnings">Earn Structure</a>
+      <a href="index.html#packages">Plans</a>
+      <a href="about.html" aria-current="page" style="color:var(--gold)">About</a>
+      <a href="faq.html">FAQ</a>
+    </div>
+    <div class="nav-cta">
+      <a href="signin.html" class="btn btn-outline" style="padding:9px 20px;font-size:0.875rem;" aria-label="Sign in">Sign In</a>
+      <a href="signup.html" class="btn btn-gold" style="padding:9px 20px;font-size:0.875rem;" aria-label="Join VAULTRA">Join Free ✦</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Toggle mobile menu" aria-expanded="false" aria-controls="mobileMenu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <main id="main-content">
+
+    <!-- HERO -->
+    <section class="about-hero" aria-label="About VAULTRA Nigeria">
+      <div class="about-hero-label">🇳🇬 Our Story</div>
+      <h1>Building the Euro Bridge<br>for <span class="gold-text">Nigerian Creators</span></h1>
+      <p class="about-hero-sub">VAULTRA Nigeria was founded in Lagos in 2026 with a clear mission: give every Nigerian content creator a direct path to earning in Euros — regardless of their audience size or niche.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="signup.html" class="btn btn-gold btn-lg">Join the Platform ✦</a>
+        <a href="#contact" class="btn btn-outline btn-lg">Contact Us</a>
+      </div>
+    </section>
+
+    <!-- MISSION -->
+    <section class="section" id="mission" aria-labelledby="mission-title">
+      <div class="container">
+        <div class="mission-grid">
+          <div class="mission-text">
+            <div class="section-label">Our Mission</div>
+            <h2 id="mission-title">Why We Built VAULTRA</h2>
+            <p>Nigeria has one of the fastest-growing creator economies in Africa. Nigerian creators on TikTok, Instagram, and YouTube produce content that reaches millions globally — yet the monetisation tools available to them pay in Naira, leaving them exposed to currency devaluation and locked out of the global Euro economy.</p>
+            <p>VAULTRA exists to fix that gap. We built a platform where any Nigerian creator — beginner or experienced, small audience or large — can earn €2 per hour per stream, across 6 simultaneous VaultGain channels, and withdraw directly to any Nigerian bank account within 24–48 hours.</p>
+            <p>Our single activation model (₦14,000 one-time Glam Fee, no subscriptions) means the platform is accessible to everyone. We believe the barrier to earning in strong currency should be talent and time — not expensive subscription gates.</p>
+          </div>
+          <div class="mission-stat-grid" aria-label="Platform statistics">
+            <div class="mission-stat">
+              <div class="mission-stat-num">2026</div>
+              <div class="mission-stat-label">Founded in Lagos, Nigeria</div>
+            </div>
+            <div class="mission-stat">
+              <div class="mission-stat-num">6</div>
+              <div class="mission-stat-label">VaultGain earning streams</div>
+            </div>
+            <div class="mission-stat">
+              <div class="mission-stat-num">€12</div>
+              <div class="mission-stat-label">Per hour total VaultGains</div>
+            </div>
+            <div class="mission-stat">
+              <div class="mission-stat-num">24–48hr</div>
+              <div class="mission-stat-label">Withdrawal processing time</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VALUES -->
+    <section class="section section-dark" id="values" aria-labelledby="values-title">
+      <div class="container">
+        <div class="section-label">What Drives Us</div>
+        <h2 class="section-title" id="values-title">Our Core Values</h2>
+        <p class="section-subtitle">The principles that shape how VAULTRA is built and operated</p>
+
+        <div class="values-grid">
+          <div class="value-card">
+            <div class="value-icon" aria-hidden="true">🏆</div>
+            <h3>Creator First</h3>
+            <p>Every product decision starts with one question: does this help Nigerian creators earn more? Our earning structures, withdrawal speeds, and support channels are all designed to remove friction from your path to income.</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon" aria-hidden="true">🔍</div>
+            <h3>Radical Transparency</h3>
+            <p>We publish clear, honest information about what you earn, what the activation fee covers, and how withdrawals work. No hidden charges. No bait-and-switch. What you see on this page is exactly what you get.</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon" aria-hidden="true">🌍</div>
+            <h3>Built for Nigeria</h3>
+            <p>VAULTRA is built by people who understand the Nigerian creator experience — the currency challenges, the payment infrastructure, the content niches that resonate. We support English, Yoruba, Igbo, and Hausa across our support channels.</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon" aria-hidden="true">⚡</div>
+            <h3>Speed of Payment</h3>
+            <p>We process withdrawals within 24–48 hours to any major Nigerian bank — Access, GTBank, UBA, First Bank, Zenith, OPay, PalmPay, Kuda, Moniepoint. Fast payment is not a feature. It is a promise.</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon" aria-hidden="true">🔒</div>
+            <h3>Security & Trust</h3>
+            <p>All activation payments are processed through verified Moniepoint transfers with manual confirmation. Your personal data is never sold. Our Telegram and WhatsApp support channels are staffed by real administrators, not bots.</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon" aria-hidden="true">📈</div>
+            <h3>Accessible Growth</h3>
+            <p>Zero follower count requirements. Zero niche exclusions. Whether you create fashion content for 200 people or tech reviews for 200,000 — VAULTRA earns you the same €12/hour VaultGain rate. Growth on this platform is about consistency, not clout.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STORY / TIMELINE -->
+    <section class="section" id="story" aria-labelledby="story-title">
+      <div class="container">
+        <div class="section-label">Our Journey</div>
+        <h2 class="section-title" id="story-title">The VAULTRA Story</h2>
+        <p class="section-subtitle">How we got here — and where we're going</p>
+
+        <div class="story-timeline" role="list">
+          <div class="story-item" role="listitem">
+            <div class="story-dot" aria-hidden="true"></div>
+            <div class="story-date">Early 2026</div>
+            <h3>The Problem Identified</h3>
+            <p>Our founding team — Nigerian creators and digital marketers based in Lagos — noticed that every major creator monetisation tool available to Nigerians paid in local currency or required international payment methods most creators didn't have. We started mapping out a solution.</p>
+          </div>
+          <div class="story-item" role="listitem">
+            <div class="story-dot" aria-hidden="true"></div>
+            <div class="story-date">Mid 2026</div>
+            <h3>Platform Built &amp; Tested</h3>
+            <p>The first version of VAULTRA's creator dashboard was built and piloted with a small group of creators across Lagos, Abuja, and Port Harcourt. The VaultGain structure — 6 simultaneous earning streams — was refined based on their feedback. Withdrawal infrastructure integrated with Moniepoint and major Nigerian banks.</p>
+          </div>
+          <div class="story-item" role="listitem">
+            <div class="story-dot" aria-hidden="true"></div>
+            <div class="story-date">Late 2026</div>
+            <h3>Public Launch</h3>
+            <p>VAULTRA opened to all Nigerian creators with the full 6-stream VaultGain model, one-time ₦14,000 activation, and the Glam Link Bonus referral programme. The platform grew through creator-to-creator referrals on TikTok, Instagram, and Telegram.</p>
+          </div>
+          <div class="story-item" role="listitem">
+            <div class="story-dot" aria-hidden="true"></div>
+            <div class="story-date">2026 — Present</div>
+            <h3>Growing &amp; Improving</h3>
+            <p>We continue to expand support channels, add new content niches, and improve withdrawal speeds. GlamDarkMode (off-peak earnings) and GlamScript2Cash (per-script payments for writers) were added based on creator requests. More streams are in development.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEAM -->
+    <section class="section section-dark" id="team" aria-labelledby="team-title">
+      <div class="container">
+        <div class="section-label">The People Behind VAULTRA</div>
+        <h2 class="section-title" id="team-title">Our Team</h2>
+        <p class="section-subtitle">Built by Nigerians, for Nigerian creators. Our team combines creator economy expertise, fintech experience, and deep knowledge of the Nigerian digital market.</p>
+
+        <div class="team-grid">
+          <div class="team-card" itemscope itemtype="https://schema.org/Person">
+            <div class="team-avatar" aria-hidden="true">AO</div>
+            <div class="team-name" itemprop="name">Adewale Okafor</div>
+            <div class="team-role" itemprop="jobTitle">Founder &amp; CEO</div>
+            <p class="team-bio" itemprop="description">Digital marketing professional with 8 years of experience in the Nigerian creator space. Previously built audience monetisation tools for mid-size Nigerian creators.</p>
+          </div>
+          <div class="team-card" itemscope itemtype="https://schema.org/Person">
+            <div class="team-avatar" aria-hidden="true">CI</div>
+            <div class="team-name" itemprop="name">Chisom Igwe</div>
+            <div class="team-role" itemprop="jobTitle">Head of Creator Relations</div>
+            <p class="team-bio" itemprop="description">Former content creator turned community builder. Manages our Telegram and WhatsApp creator communities, handles onboarding and creator support.</p>
+          </div>
+          <div class="team-card" itemscope itemtype="https://schema.org/Person">
+            <div class="team-avatar" aria-hidden="true">FM</div>
+            <div class="team-name" itemprop="name">Fatimah Musa</div>
+            <div class="team-role" itemprop="jobTitle">Head of Payments</div>
+            <p class="team-bio" itemprop="description">Fintech specialist with background in Nigerian payment infrastructure. Oversees withdrawal processing, bank integrations, and creator payment reconciliation.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEGITIMACY / TRANSPARENCY -->
+    <section class="section" id="legitimacy" aria-labelledby="legit-title">
+      <div class="container" style="max-width:760px;">
+        <div class="section-label">Transparency Statement</div>
+        <h2 class="section-title" id="legit-title">Is VAULTRA Legitimate?</h2>
+        <p class="section-subtitle">We know you've seen platforms come and go. Here's what makes VAULTRA different — and what we want you to know before you join.</p>
+
+        <div class="legit-block">
+          <h2>What VAULTRA is</h2>
+          <ul class="legit-list">
+            <li><strong>A legitimate Nigerian creator monetisation platform</strong> founded in Lagos in 2026, operated by a Nigerian team.</li>
+            <li><strong>A one-time payment model</strong> — your ₦14,000 Glam Fee activates your account permanently. There are no monthly renewals, no hidden upgrade charges.</li>
+            <li><strong>A real payment system</strong> — withdrawals go to Nigerian bank accounts via Moniepoint and major banks within 24–48 hours of request.</li>
+            <li><strong>Fully transparent earning structure</strong> — €2 per hour per stream, €12/hour total across 6 streams. No hidden multipliers or conditions.</li>
+            <li><strong>A referral programme with real limits</strong> — the Glam Link Bonus (₦12,000 per referral) is real but depends on your referred creators also activating their accounts. We don't promise passive income without effort.</li>
+          </ul>
+
+          <h2 style="margin-top:24px;">What VAULTRA is not</h2>
+          <ul class="legit-list">
+            <li><strong>Not a get-rich-quick scheme</strong> — earning €12/hour requires active task completion. The income is real, but so is the work involved.</li>
+            <li><strong>Not a pyramid scheme</strong> — earnings from VaultGain streams are based on your personal task output, not solely on recruitment. The referral bonus is supplemental.</li>
+            <li><strong>Not a subscription trap</strong> — you pay ₦14,000 once. If you decide VAULTRA isn't for you, there are no recurring charges.</li>
+          </ul>
+
+          <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
+            <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Have questions about how VAULTRA works before you sign up? Reach us at <a href="mailto:support@vaultrang.com" style="color:var(--gold);font-weight:600;">support@vaultrang.com</a> or on <a href="https://t.me/VAULTRANG" target="_blank" rel="noopener noreferrer" style="color:var(--gold);font-weight:600;">Telegram</a>. We respond to all legitimate enquiries.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="section section-dark" id="contact" aria-labelledby="contact-title">
+      <div class="container">
+        <div class="section-label">Get In Touch</div>
+        <h2 class="section-title" id="contact-title">Contact VAULTRA Nigeria</h2>
+        <p class="section-subtitle">Our team is available to answer your questions before and after you join.</p>
+
+        <div class="contact-grid">
+          <a href="mailto:support@vaultrang.com" class="contact-card" aria-label="Email VAULTRA support">
+            <div class="contact-icon" aria-hidden="true">✉️</div>
+            <h3>Email Support</h3>
+            <p>For account enquiries, payment questions, and general support</p>
+            <span class="contact-link">support@vaultrang.com →</span>
+          </a>
+          <a href="https://t.me/VAULTRANG" target="_blank" rel="noopener noreferrer" class="contact-card" aria-label="Join VAULTRA Telegram">
+            <div class="contact-icon" aria-hidden="true">📱</div>
+            <h3>Telegram Community</h3>
+            <p>Join our official Telegram channel for announcements and creator support</p>
+            <span class="contact-link">@VAULTRANG on Telegram →</span>
+          </a>
+          <div class="contact-card" style="cursor:default;">
+            <div class="contact-icon" aria-hidden="true">📍</div>
+            <h3>Based in Nigeria</h3>
+            <p>Our team is Nigeria-based and support is available in English, Yoruba, Igbo, and Hausa</p>
+            <span class="contact-link" style="color:var(--text-muted);">Lagos, Nigeria</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="section cta-section" aria-labelledby="about-cta-title">
+      <div class="container">
+        <div class="cta-card">
+          <div class="cta-content">
+            <h2 id="about-cta-title">Ready to Join VAULTRA?</h2>
+            <p>Now that you know who we are, take the next step. Create your free account and activate with a one-time ₦14,000 Glam Fee to start earning €12/hour across 6 VaultGain streams.</p>
+            <div class="cta-actions">
+              <a href="signup.html" class="btn btn-gold btn-lg">Create Free Account ✦</a>
+              <a href="faq.html" class="btn btn-outline btn-lg">Read FAQs First</a>
+            </div>
+          </div>
+          <div class="cta-visual" aria-hidden="true">€€€</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTERNAL LINKS -->
+    <section class="section internal-links-section" aria-label="More from VAULTRA Nigeria">
+      <div class="container container-narrow">
+        <h2 class="internal-links-title">Explore VAULTRA Nigeria</h2>
+        <div class="internal-links-grid">
+          <a href="signup.html" class="internal-link-card">
+            <span class="il-icon" aria-hidden="true">✦</span>
+            <div>
+              <strong>Create Your Creator Account</strong>
+              <span>Start in under 2 minutes</span>
+            </div>
+          </a>
+          <a href="index.html#earnings" class="internal-link-card">
+            <span class="il-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M15 8.5A4 4 0 0 0 8 12a4 4 0 0 0 7 3.5"/></svg></span>
+            <div>
+              <strong>Full Earning Structure</strong>
+              <span>All 6 VaultGain streams explained</span>
+            </div>
+          </a>
+          <a href="index.html#how-it-works" class="internal-link-card">
+            <span class="il-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span>
+            <div>
+              <strong>How VAULTRA Works</strong>
+              <span>3-step signup to earning</span>
+            </div>
+          </a>
+          <a href="faq.html" class="internal-link-card">
+            <span class="il-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+            <div>
+              <strong>Creator FAQ</strong>
+              <span>Activation, earnings, withdrawals</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" aria-label="Site footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="/" class="nav-logo" aria-label="VAULTRA Nigeria home">
+            <div class="nav-logo-icon" aria-hidden="true">✦</div>
+            VAULTRA
+          </a>
+          <p>Empowering Nigerian content creators to earn Euros from their passion. Lagos, Nigeria.</p>
+          <div class="footer-trust-badges">
+            <span>🔒 Secure Payments</span>
+            <span>🇳🇬 Nigerian Platform</span>
+          </div>
+        </div>
+        <div class="footer-links-grid">
+          <div>
+            <h4>Platform</h4>
+            <a href="signup.html">Join Free — Create Account</a>
+            <a href="signin.html">Sign In to Dashboard</a>
+            <a href="index.html#packages">Packages &amp; Plans</a>
+          </div>
+          <div>
+            <h4>Earn</h4>
+            <a href="index.html#earnings">VaultGain Earning Structure</a>
+            <a href="index.html#how-it-works">How VAULTRA Works</a>
+            <a href="index.html#calculator">Earnings Calculator</a>
+          </div>
+          <div>
+            <h4>Company &amp; Legal</h4>
+            <a href="about.html">About VAULTRA Nigeria</a>
+            <a href="terms.html">Terms of Service</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="mailto:support@vaultrang.com">Email Support</a>
+            <a href="https://t.me/VAULTRANG" target="_blank" rel="noopener noreferrer">Telegram Support</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 VAULTRA Nigeria. All rights reserved. Registered in Nigeria.</p>
+        <p style="margin-top:4px;font-size:0.75rem;color:var(--text-muted);">
+          <a href="https://vaultrang.com/" style="color:var(--text-muted);">vaultrang.com</a> — Nigeria's creator Euro earnings platform.
+          <a href="sitemap.xml" style="color:var(--text-muted);margin-left:12px;">Sitemap</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js" defer></script>
+
+</body>
+</html>
