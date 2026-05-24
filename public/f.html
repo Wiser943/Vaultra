@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="en-NG">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — VAULTRA Nigeria | vaultrang.com</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="images/favicon.png">
+  <link rel="stylesheet" href="css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+  <script>
+    eruda.init();
+  </script>
+  <style>
+    /* Page switching */
+    .page-content { display: none; }
+    .page-content.active { display: block; }
+
+    /* ── Mobile header ── */
+    .mobile-header {
+      display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+      background: var(--bg-dark); padding: 12px 16px;
+      align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border-gold);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.5);
+      backdrop-filter: blur(20px);
+    }
+    .mobile-logo {
+      display: flex; align-items: center; gap: 8px;
+      font-family: 'Archivo', sans-serif; font-weight: 900;
+      font-size: 20px; letter-spacing: -0.5px; color: var(--gold);
+    }
+    .mobile-logo-icon {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--gold-grad); display: flex; align-items: center;
+      justify-content: center; font-size: 11px; color: var(--bg-dark);
+      font-weight: 900;
+    }
+    .hamburger-btn {
+      background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 10px; width: 42px; height: 42px;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 5px; cursor: pointer; transition: all 0.2s; padding: 0;
+    }
+    .hamburger-btn:hover { background: rgba(201,168,76,0.18); }
+    .hamburger-btn span {
+      display: block; width: 20px; height: 2px; background: var(--gold);
+      border-radius: 2px; transition: all 0.3s;
+    }
+    .hamburger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); z-index: 950;
+    }
+    .sidebar-overlay.active { display: block; }
+
+    @media (max-width: 1024px) {
+      .mobile-header { display: flex; }
+      .dashboard-main { padding-top: 70px; }
+      body { padding-bottom: 90px; }
+      .sidebar {
+        position: fixed !important; left: -300px !important; top: 0 !important;
+        height: 100vh !important; width: 260px !important; z-index: 1000 !important;
+        transition: left 0.35s cubic-bezier(0.4,0,0.2,1) !important;
+        overflow-y: auto !important;
+      }
+      .sidebar.mobile-open { left: 0 !important; }
+    }
+
+    /* ── Premium bottom nav ── */
+    .bottom-nav {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 800;
+      background: var(--bg-dark); border-top: 1px solid var(--border-gold);
+      padding: 0 8px 4px; box-shadow: 0 -8px 32px rgba(0,0,0,0.5);
+      backdrop-filter: blur(20px);
+    }
+    @media (max-width: 1024px) { .bottom-nav { display: flex; } }
+    .bottom-nav-item {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 4px; padding: 10px 4px 6px;
+      color: rgba(255,255,255,0.35); text-decoration: none;
+      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      border-radius: 14px; margin: 6px 2px 0; border: none;
+      background: transparent; cursor: pointer; font-family: 'Inter', sans-serif;
+      position: relative;
+    }
+    .bottom-nav-item svg { transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1); stroke: currentColor; }
+    .bottom-nav-item span { font-size: 10px; font-weight: 600; letter-spacing: 0.3px; }
+    .bottom-nav-item:hover { color: rgba(201,168,76,0.8); background: rgba(201,168,76,0.07); }
+    .bottom-nav-item.active { color: var(--gold); background: rgba(201,168,76,0.12); }
+    .bottom-nav-item.active svg { transform: scale(1.15) translateY(-1px); filter: drop-shadow(0 0 6px rgba(201,168,76,0.5)); }
+    .bottom-nav-item.active span { font-weight: 700; }
+    .bottom-nav-item.active::before {
+      content: ''; position: absolute; top: 4px; width: 4px; height: 4px;
+      background: var(--gold); border-radius: 50%;
+      box-shadow: 0 0 8px rgba(201,168,76,0.8);
+    }
+    .bottom-nav-item.nav-featured {
+      background: linear-gradient(135deg,rgba(201,168,76,0.18),rgba(201,168,76,0.06));
+      border: 1px solid rgba(201,168,76,0.2); margin-top: -8px;
+      padding-top: 14px; border-radius: 20px 20px 14px 14px;
+    }
+    .bottom-nav-item.nav-featured.active {
+      background: linear-gradient(135deg,rgba(201,168,76,0.28),rgba(201,168,76,0.1));
+      border-color: rgba(201,168,76,0.4);
+    }
+
+    /* ── Activity feed ── */
+    #activity-feed-container {
+      position: fixed; bottom: 100px; left: 16px; z-index: 700;
+      width: 320px; max-width: calc(100vw - 32px); pointer-events: none;
+    }
+    @media (max-width: 480px) { #activity-feed-container { bottom: 90px; left: 12px; width: calc(100vw - 24px); } }
+    .activity-toast {
+      display: flex; align-items: center; gap: 12px;
+      background: linear-gradient(135deg, rgba(13,8,32,0.97), rgba(21,15,40,0.98));
+      border: 1px solid rgba(201,168,76,0.2); border-left: 3px solid var(--gold);
+      border-radius: 16px; padding: 12px 14px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      pointer-events: all; margin-bottom: 8px;
+      transform: translateX(-120%); opacity: 0;
+      transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease;
+    }
+    .activity-toast.toast-show { transform: translateX(0); opacity: 1; }
+    .activity-toast.toast-hide { transform: translateX(-120%); opacity: 0; transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease; }
+    .toast-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; position: relative; }
+    .toast-avatar.earning  { background: rgba(201,168,76,0.15);  border: 1px solid rgba(201,168,76,0.3);  }
+    .toast-avatar.withdrawal { background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3);  }
+    .toast-avatar.signup   { background: rgba(245,158,11,0.15);  border: 1px solid rgba(245,158,11,0.3);  }
+    .toast-avatar::after { content: ''; position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; border-radius: 50%; border: 2px solid #0d0820; }
+    .toast-avatar.earning::after   { background: var(--gold); }
+    .toast-avatar.withdrawal::after { background: #3B82F6; }
+    .toast-avatar.signup::after    { background: #F59E0B; }
+    .toast-body { flex: 1; min-width: 0; }
+    .toast-message { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.9); line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .toast-message strong { color: var(--gold); }
+    .toast-meta { display: flex; align-items: center; gap: 6px; margin-top: 3px; }
+    .toast-time { font-size: 11px; color: rgba(255,255,255,0.35); }
+    .toast-location { font-size: 11px; color: rgba(201,168,76,0.6); font-weight: 500; }
+    .toast-dot { width: 3px; height: 3px; background: rgba(255,255,255,0.2); border-radius: 50%; }
+    .toast-close { width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,0.06); border: none; color: rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-size: 12px; line-height: 1; transition: all 0.2s; pointer-events: all; }
+    .toast-close:hover { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); }
+
+    /* ── Locked preview ── */
+    .locked-preview-section { margin-top: 32px; }
+    .locked-gig-preview { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    @media (max-width: 768px) { .locked-gig-preview { grid-template-columns: 1fr; gap: 12px; } }
+    .preview-gig-card {
+      background: linear-gradient(135deg, rgba(21,15,40,0.9), rgba(30,22,53,0.95));
+      border: 1px solid rgba(201,168,76,0.15); border-radius: 20px; padding: 24px 20px;
+      text-align: center; position: relative; overflow: hidden; transition: all 0.2s;
+    }
+    .preview-gig-card:hover { border-color: rgba(201,168,76,0.35); transform: translateY(-3px); }
+    .preview-badge { position: absolute; top: 12px; right: 12px; font-size: 0.65rem; font-weight: 700; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; padding: 3px 9px; border-radius: 20px; }
+    .preview-gig-icon { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; font-size: 1.5rem; }
+    .preview-gig-icon.lifestyle { background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.25); }
+    .preview-gig-icon.realtime  { background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.25); }
+    .preview-gig-icon.script    { background: rgba(34,197,94,0.12);  border: 1px solid rgba(34,197,94,0.25); }
+    .preview-gig-card h3 { font-family: 'Archivo', sans-serif; font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+    .preview-gig-earn { font-family: 'Archivo', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--gold); margin-bottom: 8px; }
+    .preview-gig-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px; }
+    .preview-unlock-btn { width: 100%; padding: 9px; border-radius: 8px; background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.25); color: var(--gold); font-family: 'Archivo', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+    .preview-unlock-btn:hover { background: rgba(201,168,76,0.2); }
+
+    /* ── Daily calculator preview ── */
+    .daily-calc-preview { background: linear-gradient(135deg,rgba(21,15,40,0.9),rgba(30,22,53,0.95)); border: 1px solid rgba(201,168,76,0.15); border-radius: 20px; padding: 28px; margin-bottom: 20px; }
+    .daily-calc-title { font-family: 'Archivo', sans-serif; font-size: 1.1rem; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+    .breakdown-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .breakdown-item:last-child { border-bottom: none; }
+    .breakdown-task { font-size: 0.875rem; color: var(--text-secondary); }
+    .breakdown-amount { font-family: 'Archivo', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--gold); }
+    .breakdown-total { display: flex; justify-content: space-between; padding: 14px 0 0; margin-top: 10px; border-top: 2px solid rgba(201,168,76,0.2); }
+    .breakdown-total span:first-child { font-weight: 700; }
+    .total-amount { font-family: 'Archivo', sans-serif; font-size: 1.3rem; font-weight: 900; color: var(--success); }
+
+    /* ── Referral preview ── */
+    .referral-preview-card { background: linear-gradient(135deg,rgba(21,15,40,0.9),rgba(30,22,53,0.95)); border: 1px solid rgba(201,168,76,0.15); border-radius: 20px; padding: 28px; margin-bottom: 24px; }
+    .referral-preview-card h3 { font-family: 'Archivo', sans-serif; font-size: 1.1rem; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .referral-preview-card > p { font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 20px; }
+    .referral-tiers { display: flex; gap: 12px; margin-bottom: 20px; }
+    .tier-card { flex: 1; padding: 14px 12px; border-radius: 12px; background: rgba(201,168,76,0.05); border: 1px solid rgba(255,255,255,0.06); text-align: center; }
+    .tier-icon { font-size: 22px; margin-bottom: 6px; }
+    .tier-label { font-family: 'Inter', sans-serif; font-size: 10px; color: rgba(255,255,255,0.4); display: block; margin-bottom: 4px; }
+    .tier-amount { font-family: 'Archivo', sans-serif; font-size: 16px; font-weight: 800; color: var(--gold); }
+    .referral-preview-stats { display: flex; gap: 12px; }
+    .ref-stat { flex: 1; padding: 12px; border-radius: 10px; background: rgba(201,168,76,0.05); border: 1px solid rgba(201,168,76,0.1); text-align: center; }
+    .ref-num { font-family: 'Archivo', sans-serif; font-size: 20px; font-weight: 800; color: var(--gold); display: block; }
+    .ref-label { font-family: 'Inter', sans-serif; font-size: 11px; color: rgba(255,255,255,0.4); }
+
+    /* ── Section titles ── */
+    .section-title { font-family: 'Archivo', sans-serif; font-size: 20px; font-weight: 700; color: rgba(255,255,255,0.9); margin: 0; }
+
+    /* ── App download banner ── */
+    .app-download-banner {
+      position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(100px);
+      z-index: 600; background: linear-gradient(135deg,rgba(21,15,40,0.98),rgba(30,22,53,0.99));
+      border: 1px solid rgba(201,168,76,0.25); border-radius: 16px; padding: 14px 16px;
+      max-width: 400px; width: calc(100% - 32px); box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+      display: flex; align-items: center; gap: 12px; opacity: 0;
+      transition: all 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .app-download-banner.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .app-banner-close { background: rgba(255,255,255,0.08); border: none; color: rgba(255,255,255,0.5); width: 24px; height: 24px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .app-banner-content { display: flex; align-items: center; gap: 12px; flex: 1; }
+    .app-banner-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--gold-grad); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .app-banner-text { flex: 1; }
+    .app-banner-title { font-family: 'Archivo', sans-serif; font-size: 13px; font-weight: 700; color: var(--text-primary); }
+    .app-banner-subtitle { font-size: 11px; color: var(--text-muted); }
+    .app-banner-download { background: var(--gold-grad); border: none; color: var(--bg-dark); padding: 7px 14px; border-radius: 8px; font-family: 'Archivo', sans-serif; font-size: 12px; font-weight: 800; cursor: pointer; flex-shrink: 0; }
+
+    /* ── Go-back modal ── */
+    .go-back-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 3000; align-items: center; justify-content: center; padding: 20px; }
+    .go-back-modal-overlay.active { display: flex; }
+    .go-back-modal { background: var(--surface); border: 1px solid rgba(201,168,76,0.25); border-radius: 20px; padding: 36px; max-width: 440px; width: 100%; text-align: center; }
+    .go-back-modal-icon { font-size: 2.5rem; margin-bottom: 16px; }
+    .go-back-modal-title { font-family: 'Archivo', sans-serif; font-size: 1.4rem; font-weight: 800; margin-bottom: 12px; }
+    .go-back-modal-body { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 8px; }
+    .go-back-modal-note { font-size: 0.82rem; color: #f59e0b; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); border-radius: 8px; padding: 10px 14px; margin-bottom: 20px; line-height: 1.6; }
+    .go-back-modal-actions { display: flex; flex-direction: column; gap: 10px; }
+    .go-back-modal-btn-confirm { padding: 13px; border-radius: 10px; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; }
+    .go-back-modal-btn-confirm:hover { background: rgba(239,68,68,0.2); }
+    .go-back-modal-btn-cancel { padding: 13px; border-radius: 10px; background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.25); color: var(--gold); font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; }
+    .go-back-modal-btn-cancel:hover { background: rgba(201,168,76,0.18); }
+
+    /* ── Loading overlay ── */
+    .loading-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); z-index: 4000; align-items: center; justify-content: center; flex-direction: column; gap: 20px; }
+    .loading-overlay.active { display: flex; }
+    .loading-spinner-custom { width: 56px; height: 56px; border: 3px solid rgba(201,168,76,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.9s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text-custom { font-family: 'Archivo', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
+    .loading-subtext-custom { font-size: 0.85rem; color: var(--text-muted); }
+
+    /* ── Notification ── */
+    @keyframes slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes slideOutRight { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(100px); } }
+
+    /* Mobile modal bottom sheets */
+    @media (max-width: 600px) {
+      .modal-content { border-radius: 20px 20px 0 0 !important; max-height: 92vh; overflow-y: auto; }
+      .modal { align-items: flex-end !important; }
+      .payment-modal-content { border-radius: 20px 20px 0 0 !important; }
+    }
+
+    /* responsive tables */
+    @media (max-width: 480px) {
+      .referral-tiers { flex-direction: column; }
+      .referral-preview-stats { flex-direction: column; }
+      .locked-gig-preview { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Activity Feed -->
+<div id="activity-feed-container"></div>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- Mobile Header -->
+<div class="mobile-header" id="mobileHeader">
+  <div class="mobile-logo">
+    <div class="mobile-logo-icon">✦</div>
+    VAULTRA
+  </div>
+  <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="logo" style="text-decoration:none;">
+      <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#e8c97a,#c9a84c);display:flex;align-items:center;justify-content:center;font-size:15px;color:#0d0820;font-weight:900;flex-shrink:0;">✦</div>
+      <span>VAULTRA</span>
+    </a>
+  </div>
+
+  <nav class="sidebar-nav">
+    <button class="nav-item active" data-page="home" onclick="switchPage('home')">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 7L10 2L17 7V17C17 17.5 16.8 18 16.4 18.4C16 18.8 15.5 19 15 19H5C4.5 19 4 18.8 3.6 18.4C3.2 18 3 17.5 3 17V7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Dashboard</span>
+    </button>
+    <button class="nav-item" data-page="gigs" onclick="switchPage('gigs')">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 9L11 11L8 13V9Z" fill="currentColor"/></svg>
+      <span>Gig Channels</span>
+    </button>
+    <button class="nav-item" data-page="earnings" onclick="switchPage('earnings')">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><polyline points="2 14 6 10 9 13 13 7 18 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Earnings</span>
+    </button>
+    <button class="nav-item" data-page="wallet" onclick="switchPage('wallet')">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="2"/><circle cx="14" cy="10" r="1.5" fill="currentColor"/></svg>
+      <span>Wallet</span>
+    </button>
+    <button class="nav-item" data-page="support" onclick="switchPage('support')">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="2"/><path d="M10 14V10M10 6H10.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>Support</span>
+    </button>
+    <button class="nav-item" data-page="profile" onclick="switchPage('profile')">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M3 18C3 14.7 5.7 12 9 12H11C14.3 12 17 14.7 17 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>Profile</span>
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="logout-btn" onclick="logout()">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 17H4C3.5 17 3 16.8 2.6 16.4C2.2 16 2 15.5 2 15V5C2 4.5 2.2 4 2.6 3.6C3 3.2 3.5 3 4 3H7M13 13L17 9M17 9L13 5M17 9H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Logout</span>
+    </button>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="dashboard-main">
+  <div class="dashboard-container">
+
+    <!-- ══ HOME PAGE ══ -->
+    <div id="homePage" class="page-content active">
+      <div id="statusBanner"></div>
+
+      <!-- LOCKED STATE -->
+      <div id="lockedState" class="status-state" style="display:none;">
+        <div class="lock-card">
+          <div class="lock-icon">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+              <rect x="12" y="28" width="40" height="28" rx="4" stroke="#ef4444" stroke-width="3"/>
+              <path d="M20 28V20C20 13.4 25.4 8 32 8C38.6 8 44 13.4 44 20V28" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="32" cy="42" r="4" fill="#ef4444"/>
+            </svg>
+          </div>
+          <h2 class="lock-title">Your Account Is Locked</h2>
+          <p class="lock-subtitle">Complete your Glam Fee payment to unlock all 7 VaultGains channels and start earning €12/hour.</p>
+
+          <div id="lockedPackageInfo" style="margin:16px 0;">
+            <div style="font-size:13px;color:var(--text-muted);margin-bottom:10px;">Your selected package:</div>
+            <div id="lockedPackageName" style="font-family:'Archivo',sans-serif;font-size:17px;font-weight:700;color:rgba(255,255,255,0.9);margin-bottom:4px;">✦ Glam Package</div>
+            <div class="lock-amount" id="lockedPackageAmount">₦14,000 <span>One-time Glam Fee</span></div>
+
+            <!-- Package switcher — second package commented until confirmed -->
+            <div style="display:flex;gap:10px;justify-content:center;margin-top:14px;" id="lockedPackageSwitcher">
+              <button id="switchGlamBtn" onclick="switchLockedPackage('glam')"
+                style="flex:1;max-width:160px;padding:10px 14px;border-radius:12px;border:2px solid rgba(201,168,76,0.4);background:rgba(201,168,76,0.1);color:var(--gold);font-family:'Archivo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;">
+                ✦ Glam Package<br><span style="font-size:12px;">₦14,000</span>
+              </button>
+              <!--
+                SECOND PACKAGE — Uncomment when confirmed by VAULTRA team
+              <button id="switchPremiumBtn" onclick="switchLockedPackage('premium')"
+                style="flex:1;max-width:160px;padding:10px 14px;border-radius:12px;border:2px solid rgba(245,158,11,0.25);background:rgba(245,158,11,0.05);color:rgba(255,255,255,0.7);font-family:'Archivo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;">
+                💎 Premium Package<br><span style="font-size:12px;font-weight:700;color:#F59E0B;">₦XX,000</span>
+              </button>
+              -->
+            </div>
+            <div style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,0.35);margin-top:8px;">₦12,000 Glam Link Bonus cashback on activation</div>
+          </div>
+
+          <button class="btn-primary btn-lg" id="lockedPayBtn" onclick="openPaymentModal()">
+            Pay Now — Unlock VaultGains
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 3L14 10L7 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+
+          <div class="lock-features">
+            <div class="lock-feature">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="var(--gold)" stroke-width="2"/><path d="M6 10L9 13L14 8" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/></svg>
+              <span>₦12,000 Glam Link Bonus — instant cashback</span>
+            </div>
+            <div class="lock-feature">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="var(--gold)" stroke-width="2"/><path d="M6 10L9 13L14 8" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/></svg>
+              <span>₦10,000 Glam Reward credited to your account</span>
+            </div>
+            <div class="lock-feature">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="var(--gold)" stroke-width="2"/><path d="M6 10L9 13L14 8" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/></svg>
+              <span>All 7 VaultGains channels unlocked immediately</span>
+            </div>
+            <div class="lock-feature">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="var(--gold)" stroke-width="2"/><path d="M6 10L9 13L14 8" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/></svg>
+              <span>€12/hour Total VaultGains from day one</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Locked Preview Section -->
+        <div class="locked-preview-section">
+          <h2 class="section-title" style="text-align:center;margin-bottom:24px;">🔓 Unlock These VaultGains Channels After Payment</h2>
+
+          <div class="locked-gig-preview">
+            <div class="preview-gig-card">
+              <div class="preview-badge">🔒 Locked</div>
+              <div class="preview-gig-icon lifestyle">🎭</div>
+              <h3>Vault Lifestyle</h3>
+              <div class="preview-gig-earn">€2 / hour</div>
+              <p class="preview-gig-desc">Engage with lifestyle content and earn per active hour</p>
+              <button class="preview-unlock-btn" onclick="openPaymentModal()">Unlock Now</button>
+            </div>
+            <div class="preview-gig-card">
+              <div class="preview-badge">🔒 Locked</div>
+              <div class="preview-gig-icon realtime">⚡</div>
+              <h3>Vault Realtime</h3>
+              <div class="preview-gig-earn">€2 / hour</div>
+              <p class="preview-gig-desc">Real-time engagement tasks earning Euros per hour</p>
+              <button class="preview-unlock-btn" onclick="openPaymentModal()">Unlock Now</button>
+            </div>
+            <div class="preview-gig-card">
+              <div class="preview-badge">🔒 Locked</div>
+              <div class="preview-gig-icon script">📝</div>
+              <h3>Vault Script2Cash</h3>
+              <div class="preview-gig-earn">€2 / script</div>
+              <p class="preview-gig-desc">Write scripts for European brand campaigns</p>
+              <button class="preview-unlock-btn" onclick="openPaymentModal()">Unlock Now</button>
+            </div>
+          </div>
+
+          <!-- Daily earning calculator preview -->
+          <div class="daily-calc-preview">
+            <h3 class="daily-calc-title">💰 Your Daily VaultGains Potential</h3>
+            <div class="breakdown-item"><span class="breakdown-task">🎭 4 hours Vault Lifestyle</span><span class="breakdown-amount">€8.00</span></div>
+            <div class="breakdown-item"><span class="breakdown-task">⚡ 4 hours Vault Realtime</span><span class="breakdown-amount">€8.00</span></div>
+            <div class="breakdown-item"><span class="breakdown-task">📹 4 hours Vault FaceTime</span><span class="breakdown-amount">€8.00</span></div>
+            <div class="breakdown-item"><span class="breakdown-task">💼 4 hours Vault Works</span><span class="breakdown-amount">€8.00</span></div>
+            <div class="breakdown-item"><span class="breakdown-task">🌙 4 hours Vault DarkMode</span><span class="breakdown-amount">€8.00</span></div>
+            <div class="breakdown-item"><span class="breakdown-task">🗣 4 hours Vault Lingua</span><span class="breakdown-amount">€8.00</span></div>
+            <div class="breakdown-item"><span class="breakdown-task">📝 5 Vault Script2Cash scripts</span><span class="breakdown-amount">€10.00</span></div>
+            <div class="breakdown-total">
+              <span>Daily VaultGains Potential</span>
+              <span class="total-amount">€58.00+</span>
+            </div>
+            <button class="btn-primary btn-lg" onclick="openPaymentModal()" id="previewPayBtn" style="width:100%;margin-top:20px;border-radius:14px;">
+              Start Earning Today — Pay Now
+            </button>
+          </div>
+
+          <!-- Referral preview -->
+          <div class="referral-preview-card">
+            <h3>👥 Referral Commission Program</h3>
+            <p>Earn passive income by inviting friends to VAULTRA Nigeria</p>
+            <div class="referral-tiers">
+              <div class="tier-card">
+                <div class="tier-icon">🥇</div>
+                <span class="tier-label">1st Indirect Commission</span>
+                <span class="tier-amount">₦400</span>
+              </div>
+              <div class="tier-card">
+                <div class="tier-icon">🥈</div>
+                <span class="tier-label">2nd Indirect Commission</span>
+                <span class="tier-amount">₦100</span>
+              </div>
+              <div class="tier-card">
+                <div class="tier-icon">🎁</div>
+                <span class="tier-label">Glam Reward</span>
+                <span class="tier-amount">₦10,000</span>
+              </div>
+            </div>
+            <div class="referral-preview-stats">
+              <div class="ref-stat"><span class="ref-num">48K+</span><span class="ref-label">Active Creators</span></div>
+              <div class="ref-stat"><span class="ref-num">€12/hr</span><span class="ref-label">Total VaultGains</span></div>
+              <div class="ref-stat"><span class="ref-num">24hr</span><span class="ref-label">Withdrawals</span></div>
+            </div>
+            <button class="btn-primary" onclick="openPaymentModal()" style="width:100%;margin-top:16px;">
+              🔓 Unlock Referral Program
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- AWAITING VERIFICATION STATE -->
+      <div id="verificationState" class="status-state" style="display:none;">
+        <div class="verification-card">
+          <div class="verification-icon">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+              <circle cx="32" cy="32" r="28" stroke="#F59E0B" stroke-width="3"/>
+              <path d="M32 20V32L38 38" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h2 class="verification-title">Payment Received. Awaiting Verification.</h2>
+          <p class="verification-subtitle">Our team is reviewing your Glam Fee payment. This usually takes 1–24 hours. Send your payment proof to Telegram admin to speed up the process.</p>
+
+          <div class="verification-steps">
+            <div class="verification-step completed">
+              <div class="step-icon">✓</div>
+              <div class="step-content">
+                <div class="step-title">Registration Complete</div>
+                <div class="step-time">Completed</div>
+              </div>
+            </div>
+            <div class="verification-step completed">
+              <div class="step-icon">✓</div>
+              <div class="step-content">
+                <div class="step-title">Glam Fee Payment Received</div>
+                <div class="step-time" id="verificationAmountLabel">₦14,000 confirmed</div>
+              </div>
+            </div>
+            <div class="verification-step active">
+              <div class="step-icon"><div class="spinner"></div></div>
+              <div class="step-content">
+                <div class="step-title">Manual Verification</div>
+                <div class="step-time">In progress — send proof to admin</div>
+              </div>
+            </div>
+            <div class="verification-step">
+              <div class="step-icon">4</div>
+              <div class="step-content">
+                <div class="step-title">Account Activation</div>
+                <div class="step-time">All 7 VaultGains channels unlock</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="verification-contact-section">
+            <div class="contact-prompt">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#F59E0B" stroke-width="2"/><path d="M12 8V12M12 16H12.01" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/></svg>
+              <div>
+                <strong>Need faster verification?</strong>
+                <p>Send your payment proof directly to our Telegram admin</p>
+              </div>
+            </div>
+            <button class="btn-whatsapp-verify" onclick="openTelegramVerify()" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,#229ED9,#1a7fb5);border:none;color:#fff;font-family:'Archivo',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;margin-top:16px;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-2.04 9.613c-.148.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.48 14.697l-2.95-.924c-.642-.2-.655-.642.136-.95l11.532-4.448c.535-.194 1.003.13.364.873z"/></svg>
+              Send Payment Proof on Telegram
+            </button>
+          </div>
+
+          <div class="verification-go-back-section">
+            <p class="go-back-hint">Haven't made payment yet, or accidentally bypassed the payment step?</p>
+            <button class="btn-go-back" onclick="showGoBackModal()">← Go Back &amp; Select Package</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- VERIFIED STATE -->
+      <div id="verifiedState" class="status-state" style="display:none;">
+        <div class="welcome-section">
+          <div class="welcome-content">
+            <h1 class="dashboard-title">Welcome back, <span id="userName">Creator</span> ✦</h1>
+            <p class="dashboard-subtitle">Here's your VaultGains summary for today</p>
+          </div>
+          <div class="dashboard-date">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 2V6M13 2V6M3 8H17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <span id="currentDate"></span>
+          </div>
+        </div>
+
+        <div class="summary-grid">
+          <div class="summary-card">
+            <div class="summary-header">
+              <span class="summary-label">Total VaultGains</span>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L15 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="var(--gold)"/></svg>
+            </div>
+            <div class="summary-value" id="totalEarnings">€0.00</div>
+            <div class="summary-change positive"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 12V4M8 4L4 8M8 4L12 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Growing daily</span></div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-header">
+              <span class="summary-label">Today's Earnings</span>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="var(--gold)" stroke-width="2"/><path d="M12 6V12L16 14" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="summary-value" id="todayEarnings">€0.00</div>
+            <div class="summary-change neutral"><span>Keep engaging</span></div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-header">
+              <span class="summary-label">Wallet Balance</span>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2" stroke="var(--gold)" stroke-width="2"/><circle cx="16" cy="12" r="2" fill="var(--gold)"/></svg>
+            </div>
+            <div class="summary-value" id="walletBalance">€0.00</div>
+            <div class="summary-action"><a href="#" onclick="switchPage('wallet')" class="summary-link">Withdraw →</a></div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-header">
+              <span class="summary-label">Referral Earnings</span>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M17 21V19C17 17 15.2 15 13 15H5C2.8 15 1 17 1 19V21M23 21V19C23 17.2 21.9 15.6 20.3 15.2M16 3.1C17.6 3.6 18.8 5.1 18.8 6.8S17.6 10 16 10.5M13 7C13 9.2 11.2 11 9 11S5 9.2 5 7 6.8 3 9 3s4 1.8 4 4Z" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="summary-value" id="referralEarnings">₦0</div>
+            <div class="summary-action"><a href="#" class="summary-link">View referrals →</a></div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <h2 class="section-title">Active VaultGains Channels</h2>
+          <a href="#" onclick="switchPage('gigs')" class="section-link">View all →</a>
+        </div>
+
+        <div class="collabs-grid">
+          <div class="collab-card" onclick="checkFeatureAccess('Vault Lifestyle')">
+            <div class="collab-icon lifestyle"><span style="font-size:1.4rem;">🎭</span></div>
+            <div class="collab-content">
+              <h3 class="collab-title">Vault Lifestyle</h3>
+              <p class="collab-description">Engage with lifestyle content</p>
+              <div class="collab-footer"><span class="collab-earning">€2/hour</span><span class="collab-limit">Active</span></div>
+            </div>
+          </div>
+          <div class="collab-card" onclick="checkFeatureAccess('Vault Realtime')">
+            <div class="collab-icon realtime"><span style="font-size:1.4rem;">⚡</span></div>
+            <div class="collab-content">
+              <h3 class="collab-title">Vault Realtime</h3>
+              <p class="collab-description">Real-time engagement tasks</p>
+              <div class="collab-footer"><span class="collab-earning">€2/hour</span><span class="collab-limit">Active</span></div>
+            </div>
+          </div>
+          <div class="collab-card featured" onclick="checkFeatureAccess('Vault Script2Cash')">
+            <div class="featured-badge">Unique Earner</div>
+            <div class="collab-icon script"><span style="font-size:1.4rem;">📝</span></div>
+            <div class="collab-content">
+              <h3 class="collab-title">Vault Script2Cash</h3>
+              <p class="collab-description">Write scripts, earn per script</p>
+              <div class="collab-footer"><span class="collab-earning">€2/script</span><span class="collab-limit">Unlimited</span></div>
+            </div>
+          </div>
+          <div class="collab-card" onclick="checkFeatureAccess('Vault FaceTime')">
+            <div class="collab-icon facetime"><span style="font-size:1.4rem;">📹</span></div>
+            <div class="collab-content">
+              <h3 class="collab-title">Vault FaceTime</h3>
+              <p class="collab-description">Video engagement sessions</p>
+              <div class="collab-footer"><span class="collab-earning">€2/hour</span><span class="collab-limit">Active</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <h2 class="section-title">Recent Activity</h2>
+          <a href="#" onclick="switchPage('earnings')" class="section-link">View all →</a>
+        </div>
+        <div class="activity-card">
+          <div class="activity-empty">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="28" stroke="var(--gold)" stroke-width="2" opacity="0.3"/><path d="M32 20V32M32 44H32.02" stroke="var(--gold)" stroke-width="3" stroke-linecap="round"/></svg>
+            <p>No activity yet. Start engaging with your VaultGains channels to see earnings here.</p>
+            <button onclick="switchPage('gigs')" class="btn-secondary">Browse Channels</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Support Section (always visible) -->
+      <div class="support-section" id="supportSection">
+        <div class="support-card">
+          <div class="support-header">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16 28C22.6 28 28 22.6 28 16S22.6 4 16 4 4 9.4 4 16C4 18.5 4.8 20.8 6.1 22.7L4 28L9.3 25.9C11.2 27.2 13.5 28 16 28Z" stroke="var(--gold)" stroke-width="2"/><circle cx="12" cy="16" r="1.5" fill="var(--gold)"/><circle cx="16" cy="16" r="1.5" fill="var(--gold)"/><circle cx="20" cy="16" r="1.5" fill="var(--gold)"/></svg>
+            <div>
+              <h3 class="support-title">Need Help?</h3>
+              <p class="support-subtitle">Our support team is available 24/7 on Telegram</p>
+            </div>
+          </div>
+          <div class="support-buttons">
+            <a href="https://t.me/VAULTRA_SUPPORT?text=Hi%20VAULTRA%20Official%20i%20am%20ready%20to%20get%20started%20what%20are%20the%20procedures%3F" target="_blank" rel="noopener noreferrer" class="support-btn telegram">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-2.04 9.613c-.148.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.48 14.697l-2.95-.924c-.642-.2-.655-.642.136-.95l11.532-4.448c.535-.194 1.003.13.364.873z"/></svg>
+              Telegram Support
+            </a>
+            <a href="mailto:support@vaultrang.com" class="support-btn email">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="2"/><path d="M2 6L10 11L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              Email Support
+            </a>
+            <a href="index.html#faq" class="support-btn help">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2"/><path d="M10 14V10M10 6H10.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              Help &amp; FAQ
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ GIGS PAGE ══ -->
+    <div id="gigsPage" class="page-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">VaultGains Channels</h1>
+          <p class="page-subtitle">7 income channels · €12/hour total when all active</p>
+        </div>
+        <div class="page-stats">
+          <div class="stat-badge">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="var(--gold)" stroke-width="2"/><path d="M10 6V10L13 13" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/></svg>
+            <span>Total: <strong>€12/hour</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="collabs-detailed-grid" id="gigsGrid">
+        <!-- Gig 1 -->
+        <div class="collab-detailed-card">
+          <div class="collab-card-header">
+            <div class="collab-icon-large lifestyle"><span style="font-size:2rem;">🎭</span></div>
+            <div class="collab-badge available">Active</div>
+          </div>
+          <div class="collab-card-body">
+            <h3 class="collab-card-title">Vault Lifestyle</h3>
+            <p class="collab-card-description">Engage with lifestyle content from European brand partners. Stay active and earn Euros per hour of engagement.</p>
+            <div class="collab-stats-row">
+              <div class="collab-stat"><span class="stat-label">Earning</span><span class="stat-value">€2/hour</span></div>
+              <div class="collab-stat"><span class="stat-label">Type</span><span class="stat-value">Hourly</span></div>
+              <div class="collab-stat"><span class="stat-label">Limit</span><span class="stat-value">Unlimited</span></div>
+            </div>
+          </div>
+          <div class="collab-card-footer">
+            <button class="btn-primary btn-full" onclick="checkFeatureAccess('Vault Lifestyle')">Start Earning</button>
+          </div>
+        </div>
+        <!-- Gig 2 -->
+        <div class="collab-detailed-card">
+          <div class="collab-card-header">
+            <div class="collab-icon-large realtime"><span style="font-size:2rem;">⚡</span></div>
+            <div class="collab-badge available">Active</div>
+          </div>
+          <div class="collab-card-body">
+            <h3 class="collab-card-title">Vault Realtime</h3>
+            <p class="collab-card-description">Real-time engagement tasks that reward you per hour. Keep your session active and watch Euros accumulate.</p>
+            <div class="collab-stats-row">
+              <div class="collab-stat"><span class="stat-label">Earning</span><span class="stat-value">€2/hour</span></div>
+              <div class="collab-stat"><span class="stat-label">Type</span><span class="stat-value">Hourly</span></div>
+              <div class="collab-stat"><span class="stat-label">Limit</span><span class="stat-value">Unlimited</span></div>
+            </div>
+          </div>
+          <div class="collab-card-footer">
+            <button class="btn-primary btn-full" onclick="checkFeatureAccess('Vault Realtime')">Start Earning</button>
+          </div>
+        </div>
+        <!-- Gig 3 - Highest -->
+        <div class="collab-detailed-card featured">
+          <div class="featured-ribbon">Unique Earner</div>
+          <div class="collab-card-header">
+            <div class="collab-icon-large script"><span style="font-size:2rem;">📝</span></div>
+            <div class="collab-badge live">Per Script</div>
+          </div>
+          <div class="collab-card-body">
+            <h3 class="collab-card-title">Vault Script2Cash</h3>
+            <p class="collab-card-description">Write scripts for European brand campaigns and earn €2 per approved script. The only per-submission channel.</p>
+            <div class="collab-stats-row">
+              <div class="collab-stat"><span class="stat-label">Earning</span><span class="stat-value">€2/script</span></div>
+              <div class="collab-stat"><span class="stat-label">Type</span><span class="stat-value">Per Script</span></div>
+              <div class="collab-stat"><span class="stat-label">Limit</span><span class="stat-value">Unlimited</span></div>
+            </div>
+          </div>
+          <div class="collab-card-footer">
+            <button class="btn-primary btn-full" onclick="checkFeatureAccess('Vault Script2Cash')">Submit Script</button>
+          </div>
+        </div>
+        <!-- Gig 4 -->
+        <div class="collab-detailed-card">
+          <div class="collab-card-header">
+            <div class="collab-icon-large facetime"><span style="font-size:2rem;">📹</span></div>
+            <div class="collab-badge available">Active</div>
+          </div>
+          <div class="collab-card-body">
+            <h3 class="collab-card-title">Vault FaceTime</h3>
+            <p class="collab-card-description">Video engagement sessions with brand partners. Earn €2 per hour of participation in Vault FaceTime sessions.</p>
+            <div class="collab-stats-row">
+              <div class="collab-stat"><span class="stat-label">Earning</span><span class="stat-value">€2/hour</span></div>
+              <div class="collab-stat"><span class="stat-label">Type</span><span class="stat-value">Hourly</span></div>
+              <div class="collab-stat"><span class="stat-label">Limit</span><span class="stat-value">Unlimited</span></div>
+            </div>
+          </div>
+          <div class="collab-card-footer">
+            <button class="btn-primary btn-full" onclick="checkFeatureAccess('Vault FaceTime')">Start Earning</button>
+          </div>
+        </div>
+        <!-- Gig 5 -->
+        <div class="collab-detailed-card">
+          <div class="collab-card-header">
+            <div class="collab-icon-large works"><span style="font-size:2rem;">💼</span></div>
+            <div class="collab-badge available">Active</div>
+          </div>
+          <div class="collab-card-body">
+            <h3 class="collab-card-title">Vault Works</h3>
+            <p class="collab-card-description">Professional task channel earning €2 per hour of active engagement with VAULTRA's work-based content.</p>
+            <div class="collab-stats-row">
+              <div class="collab-stat"><span class="stat-label">Earning</span><span class="stat-value">€2/hour</span></div>
+              <div class="collab-stat"><span class="stat-label">Type</span><span class="stat-value">Hourly</span></div>
+              <div class="collab-stat"><span class="stat-label">Limit</span><span class="stat-value">Unlimited</span></div>
+            </div>
+          </div>
+          <div class="collab-card-footer">
+            <button class="btn-primary btn-full" onclick="checkFeatureAccess('Vault Works')">Start Earning</button>
+          </div>
+        </div>
+        <!-- Gig 6 -->
+        <div class="collab-detailed-card">
+          <div class="collab-card-header">
+            <div class="collab-icon-large darkmode"><span style="font-size:2rem;">🌙</span></div>
+            <div class="collab-badge available">Active</div>
+          </div>
+          <div class="collab-card-body">
+            <h3 class="collab-card-title">Vault DarkMode</h3>
+            <p class="collab-card-description">Night-mode engagement channel earning €2 per hour. Earn Euros even during evening hours.</p>
+            <div class="collab-stats-row">
+              <div class="collab-stat"><span class="stat-label">Earning</span><span class="stat-value">€2/hour</span></div>
+              <div class="collab-stat"><span class="stat-label">Type</span><span class="stat-value">Hourly</span></div>
+              <div class="collab-stat"><span class="stat-label">Limit</span><span class="stat-value">Unlimited</span></div>
+            </div>
+          </div>
+          <div class="collab-card-footer">
+            <button class="btn-primary btn-full" onclick="checkFeatureAccess('Vault DarkMode')">Start Earning</button>
+          </div>
+        </div>
+        <!-- Gig 7 -->
+        <div class="collab-detailed-card">
+          <div class="collab-card-header">
+            <div class="collab-icon-large lingua"><span style="font-size:2rem;">🗣</span></div>
+            <div class="collab-badge available">Active</div>
+          </div>
+          <div class="collab-card-body">
+            <h3 class="collab-card-title">Vault Lingua</h3>
+            <p class="collab-card-description">Language and communication tasks that earn €2 per hour. Engage with multilingual brand content.</p>
+            <div class="collab-stats-row">
+              <div class="collab-stat"><span class="stat-label">Earning</span><span class="stat-value">€2/hour</span></div>
+              <div class="collab-stat"><span class="stat-label">Type</span><span class="stat-value">Hourly</span></div>
+              <div class="collab-stat"><span class="stat-label">Limit</span><span class="stat-value">Unlimited</span></div>
+            </div>
+          </div>
+          <div class="collab-card-footer">
+            <button class="btn-primary btn-full" onclick="checkFeatureAccess('Vault Lingua')">Start Earning</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ EARNINGS PAGE ══ -->
+    <div id="earningsPage" class="page-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">My VaultGains</h1>
+          <p class="page-subtitle">Track your Euro earnings and performance</p>
+        </div>
+        <div class="period-selector">
+          <button class="period-btn active" onclick="changePeriod('today', event)">Today</button>
+          <button class="period-btn" onclick="changePeriod('week', event)">Week</button>
+          <button class="period-btn" onclick="changePeriod('month', event)">Month</button>
+          <button class="period-btn" onclick="changePeriod('all', event)">All Time</button>
+        </div>
+      </div>
+      <div class="earnings-summary-grid">
+        <div class="earnings-summary-card primary">
+          <div class="summary-content">
+            <span class="summary-label">Total VaultGains</span>
+            <h2 class="summary-amount" id="totalEarningsPage">€0.00</h2>
+          </div>
+        </div>
+        <div class="earnings-summary-card">
+          <div class="summary-content">
+            <span class="summary-label">This Period</span>
+            <h2 class="summary-amount" id="periodEarningsPage">€0.00</h2>
+            <div class="summary-detail">From <span id="taskCountPage">0</span> active hours</div>
+          </div>
+        </div>
+        <div class="earnings-summary-card">
+          <div class="summary-content">
+            <span class="summary-label">Referral Commissions</span>
+            <h2 class="summary-amount" id="avgPerTaskPage">₦0</h2>
+            <div class="summary-detail">₦400 per direct referral</div>
+          </div>
+        </div>
+        <div class="earnings-summary-card">
+          <div class="summary-content">
+            <span class="summary-label">Glam Reward Balance</span>
+            <h2 class="summary-amount" id="pendingAmountPage">₦10,000</h2>
+            <div class="summary-detail">Credited on activation</div>
+          </div>
+        </div>
+      </div>
+      <div class="activity-card">
+        <div class="activity-empty">
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="28" stroke="var(--gold)" stroke-width="2" opacity="0.3"/><path d="M32 20V32M32 44H32.02" stroke="var(--gold)" stroke-width="3" stroke-linecap="round"/></svg>
+          <p>No earning history yet. Start engaging with VaultGains channels to see your Euro earnings here.</p>
+          <button onclick="switchPage('gigs')" class="btn-secondary">Go to Gig Channels</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ WALLET PAGE ══ -->
+    <div id="walletPage" class="page-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">My Wallet</h1>
+          <p class="page-subtitle">Manage your Euro earnings and withdrawals</p>
+        </div>
+      </div>
+
+      <div class="wallet-cards">
+        <div class="wallet-balance-card">
+          <div class="wallet-balance-header">
+            <span class="wallet-balance-label">Available Balance</span>
+            <button class="btn-icon" onclick="openWithdrawModal()">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2V14M10 14L6 10M10 14L14 10M3 18H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <div class="wallet-balance-amount" id="walletBalancePage">€0.00</div>
+          <div class="wallet-balance-sub">≈ ₦0 at current rate</div>
+          <div class="wallet-actions">
+            <button class="btn-primary" onclick="openWithdrawModal()">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2V14M10 14L6 10M10 14L14 10M3 18H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Withdraw Funds
+            </button>
+            <button class="btn-secondary" onclick="openAddBankModal()">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="2"/><path d="M2 8H18" stroke="currentColor" stroke-width="2"/></svg>
+              Add Bank Account
+            </button>
+          </div>
+        </div>
+        <div class="wallet-stats-grid">
+          <div class="wallet-stat-card">
+            <div class="wallet-stat-icon">₦</div>
+            <div class="wallet-stat-content">
+              <span class="wallet-stat-label">Approved for Withdrawal</span>
+              <span class="wallet-stat-value" id="approvedBalancePage">€0.00</span>
+            </div>
+          </div>
+          <div class="wallet-stat-card">
+            <div class="wallet-stat-icon">⏳</div>
+            <div class="wallet-stat-content">
+              <span class="wallet-stat-label">Pending Verification</span>
+              <span class="wallet-stat-value" id="pendingBalancePage">€0.00</span>
+            </div>
+          </div>
+          <div class="wallet-stat-card">
+            <div class="wallet-stat-icon">🏦</div>
+            <div class="wallet-stat-content">
+              <span class="wallet-stat-label">Total Withdrawn</span>
+              <span class="wallet-stat-value">€0.00</span>
+            </div>
+          </div>
+          <div class="wallet-stat-card">
+            <div class="wallet-stat-icon">🎁</div>
+            <div class="wallet-stat-content">
+              <span class="wallet-stat-label">Glam Reward</span>
+              <span class="wallet-stat-value" style="color:var(--success);">₦10,000</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:28px;">
+        <h2 class="section-title">Transaction History</h2>
+      </div>
+      <div class="activity-card">
+        <div class="activity-empty">
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect x="8" y="12" width="48" height="40" rx="4" stroke="var(--gold)" stroke-width="2" opacity="0.3"/><path d="M20 28H44M20 36H36" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" opacity="0.5"/></svg>
+          <p>No transactions yet. Withdraw your first VaultGains to see history here.</p>
+          <button onclick="openAddBankModal()" class="btn-secondary">Add Bank Account</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SUPPORT PAGE ══ -->
+    <div id="supportPage" class="page-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Help &amp; Support</h1>
+          <p class="page-subtitle">We're available 24/7 to help you</p>
+        </div>
+      </div>
+      <div class="support-card" style="margin-bottom:24px;">
+        <div class="support-header">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16 28C22.6 28 28 22.6 28 16S22.6 4 16 4 4 9.4 4 16C4 18.5 4.8 20.8 6.1 22.7L4 28L9.3 25.9C11.2 27.2 13.5 28 16 28Z" stroke="var(--gold)" stroke-width="2"/><circle cx="12" cy="16" r="1.5" fill="var(--gold)"/><circle cx="16" cy="16" r="1.5" fill="var(--gold)"/><circle cx="20" cy="16" r="1.5" fill="var(--gold)"/></svg>
+          <div>
+            <h3 class="support-title">Contact VAULTRA Support</h3>
+            <p class="support-subtitle">Fastest response on Telegram — typically under 1 hour</p>
+          </div>
+        </div>
+        <div class="support-buttons">
+          <a href="https://t.me/VAULTRA_SUPPORT?text=Hi%20VAULTRA%20Official%20i%20am%20ready%20to%20get%20started%20what%20are%20the%20procedures%3F" target="_blank" rel="noopener noreferrer" class="support-btn telegram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-2.04 9.613c-.148.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.48 14.697l-2.95-.924c-.642-.2-.655-.642.136-.95l11.532-4.448c.535-.194 1.003.13.364.873z"/></svg>
+            Telegram Support
+          </a>
+          <a href="mailto:support@vaultrang.com" class="support-btn email">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="2"/><path d="M2 6L10 11L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Email Support
+          </a>
+          <a href="index.html#faq" class="support-btn help">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2"/><path d="M10 14V10M10 6H10.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Help &amp; FAQ
+          </a>
+          <a href="index.html#earning-structure" class="support-btn help">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M2 14L6 10L9 13L13 7L18 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Earning Structure
+          </a>
+        </div>
+      </div>
+
+      <!-- FAQ mini -->
+      <div class="section-header"><h2 class="section-title">Quick Answers</h2></div>
+      <div class="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question"><span>How much does VAULTRA pay per hour?</span><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div class="faq-answer"><p>VAULTRA Nigeria pays a total of €12 per hour in VaultGains. This is made up of €2/hour from 6 hourly channels (Vault Lifestyle, Vault Realtime, Vault FaceTime, Vault Works, Vault DarkMode, Vault Lingua) plus Vault Script2Cash which pays €2 per script submitted.</p></div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question"><span>How long does verification take?</span><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div class="faq-answer"><p>Manual verification takes 1–24 hours after you send your payment proof to our Telegram admin at t.me/VAULTRA_SUPPORT Send your receipt immediately after paying for fastest processing.</p></div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question"><span>What is the Glam Link Bonus?</span><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div class="faq-answer"><p>The Glam Link Bonus is a ₦12,000 (€6) instant cashback credited to your account immediately after you pay the ₦14,000 Glam Fee. You also receive a ₦10,000 Glam Reward on top.</p></div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question"><span>How fast are withdrawals processed?</span><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div class="faq-answer"><p>VAULTRA processes withdrawals within 24 hours to local Nigerian bank accounts and within 48 hours to domiciliary (DOM) accounts. The minimum withdrawal is €5.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PROFILE PAGE ══ -->
+    <div id="profilePage" class="page-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">My Profile</h1>
+          <p class="page-subtitle">Manage your creator account</p>
+        </div>
+      </div>
+
+      <div class="profile-layout">
+        <div class="profile-card">
+          <div class="profile-avatar" id="profileInitials">C</div>
+          <h2 class="profile-name" id="profileName">Creator</h2>
+          <p class="profile-email" id="profileEmail">—</p>
+          <div class="profile-badge">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M5 8L7 10L11 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            VAULTRA Creator
+          </div>
+        </div>
+
+        <div class="profile-details-card">
+          <h3 class="card-title">Account Information</h3>
+          <div class="profile-info-grid">
+            <div class="profile-info-item">
+              <span class="info-label">Full Name</span>
+              <span class="info-value" id="profileFullName">—</span>
+            </div>
+            <div class="profile-info-item">
+              <span class="info-label">Email Address</span>
+              <span class="info-value" id="profileEmailInfo">—</span>
+            </div>
+            <div class="profile-info-item">
+              <span class="info-label">Joined</span>
+              <span class="info-value" id="profileJoined">—</span>
+            </div>
+            <div class="profile-info-item">
+              <span class="info-label">Account Status</span>
+              <span class="info-value" id="profileStatus" style="color:var(--gold);">Loading...</span>
+            </div>
+          </div>
+
+          <h3 class="card-title" style="margin-top:24px;">Your Referral Link</h3>
+          <div class="referral-box">
+            <div class="referral-code-display">
+              <span class="referral-label">vaultrang.com/signup?ref=</span>
+              <span class="referral-code" id="referralCode">GLAM0000</span>
+            </div>
+            <button class="btn-secondary" onclick="copyReferralCode()">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="10" height="10" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4 14H12C13.1 14 14 13.1 14 12V4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Copy Link
+            </button>
+          </div>
+          <p style="font-size:0.78rem;color:var(--text-muted);margin-top:8px;">Earn ₦400 per 1st-level referral · ₦100 per 2nd-level referral</p>
+
+          <h3 class="card-title" style="margin-top:24px;">Notifications</h3>
+          <div class="notification-option">
+            <div class="notification-option-info">
+              <h4>Email Notifications</h4>
+              <p>Receive updates about VaultGains and account activity</p>
+            </div>
+            <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div class="notification-option">
+            <div class="notification-option-info">
+              <h4>🔴 Live Activity Feed</h4>
+              <p>Show real-time creator activity notifications</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" checked id="activityFeedToggle" onchange="toggleActivityFeed(this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="notification-option">
+            <div class="notification-option-info">
+              <h4>Withdrawal Updates</h4>
+              <p>Notifications about your Euro withdrawal status</p>
+            </div>
+            <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+          </div>
+
+          <div style="margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.05);">
+            <button class="btn-danger-outline" onclick="logout()" style="width:100%;">
+              Sign Out of VAULTRA
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="bottom-nav-item active" data-page="home" onclick="switchPage('home')">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 9L12 2L21 9V20C21 20.5 20.8 21 20.4 21.4C20 21.8 19.5 22 19 22H5C4.5 22 4 21.8 3.6 21.4C3.2 21 3 20.5 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+    <span>Home</span>
+  </button>
+  <button class="bottom-nav-item nav-featured" data-page="gigs" onclick="switchPage('gigs')">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/><path d="M9 11L13 13L9 15V11Z" fill="currentColor"/></svg>
+    <span>Channels</span>
+  </button>
+  <button class="bottom-nav-item" data-page="earnings" onclick="switchPage('earnings')">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>Earnings</span>
+  </button>
+  <button class="bottom-nav-item" data-page="wallet" onclick="switchPage('wallet')">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="2" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="12" r="2" fill="currentColor"/></svg>
+    <span>Wallet</span>
+  </button>
+  <button class="bottom-nav-item" data-page="profile" onclick="switchPage('profile')">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M4 20C4 16.7 6.7 14 10 14H14C17.3 14 20 16.7 20 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <span>Profile</span>
+  </button>
+</nav>
+
+<!-- ══ PAYMENT MODAL ══ -->
+<div class="modal" id="paymentModal">
+  <div class="modal-overlay" onclick="closePaymentModal()"></div>
+  <div class="modal-content payment-modal-content">
+    <button class="modal-close" onclick="closePaymentModal()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="payment-modal-header">
+      <div class="logo-payment">
+        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#e8c97a,#c9a84c);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#0d0820;">✦</div>
+        <span>GLAMOUR</span>
+      </div>
+      <h1>Glam Fee Payment</h1>
+      <p>Activate your account and unlock all 7 VaultGains channels</p>
+    </div>
+    <div class="payment-modal-body">
+      <div class="instruction-banner">
+        <p><strong>Important:</strong> Transfer the exact amount shown below to the account below. After payment, click "I have made payment" — our admin will verify within 24 hours.</p>
+      </div>
+      <div class="amount-section">
+        <div class="amount-label">Amount to Pay</div>
+        <div class="amount-value-large" id="modalAmountDisplay">₦14,000</div>
+        <div class="package-badge">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="2"/><path d="M5 8L7 10L11 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span id="modalPackageBadge">GLAM PACKAGE • ₦12,000 Instant Cashback</span>
+        </div>
+      </div>
+      <div class="payment-details-card">
+        <div class="payment-detail-row">
+          <span class="payment-detail-label">Account Number</span>
+          <div class="payment-detail-value">
+            <span class="account-number-big" id="modalBankNum">3003784982</span>
+            <button class="copy-btn-new" onclick="copyAccountNumberNew()">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" id="copyIconSvg"><rect x="2" y="2" width="10" height="10" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M4 14H12C13.1 14 14 13.1 14 12V4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <span id="copyTextNew">Copy</span>
+            </button>
+          </div>
+        </div>
+        <div class="payment-detail-row">
+          <span class="payment-detail-label">Bank Name</span>
+          <div class="payment-detail-value"><span class="bank-name-highlight">KUDA</span></div>
+        </div>
+        <div class="payment-detail-row">
+          <span class="payment-detail-label">Beneficiary Name</span>
+          <div class="payment-detail-value"><span>PRIMEAXIS TECHNOLOGY VENTURES</span></div>
+        </div>
+      </div>
+      <button class="btn-confirm-payment" onclick="confirmPaymentNew()">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="2"/><path d="M6 10L9 13L14 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span>I have made payment</span>
+      </button>
+      <button class="btn-cancel-payment" onclick="closePaymentModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loadingOverlayPayment">
+  <div class="loading-content">
+    <div class="loading-spinner-custom"></div>
+    <div class="loading-text-custom">Confirming Payment...</div>
+    <div class="loading-subtext-custom">Please wait — you will be redirected to Telegram</div>
+  </div>
+</div>
+
+<!-- ══ WITHDRAW MODAL ══ -->
+<div class="modal" id="withdrawModal">
+  <div class="modal-overlay" onclick="closeWithdrawModal()"></div>
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeWithdrawModal()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    <div class="modal-header">
+      <h2 class="modal-title">Withdraw VaultGains</h2>
+      <p class="modal-subtitle">Euros transferred to your Nigerian bank in 24 hours</p>
+    </div>
+    <div class="modal-body">
+      <form id="withdrawForm" onsubmit="submitWithdrawal(event)">
+        <div class="form-group">
+          <label class="form-label">Available Balance</label>
+          <div class="balance-display" id="modalBalance">€0.00</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="withdrawAmount">Amount (€)</label>
+          <input type="number" id="withdrawAmount" class="form-input" placeholder="Min. €5" min="5" step="0.01" required>
+          <div class="quick-amounts">
+            <button type="button" class="quick-amount-btn" onclick="setAmount(5)">€5</button>
+            <button type="button" class="quick-amount-btn" onclick="setAmount(20)">€20</button>
+            <button type="button" class="quick-amount-btn" onclick="setAmount(50)">€50</button>
+            <button type="button" class="quick-amount-btn" onclick="setAmountMax()">Max</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="bankAccount">Bank Account</label>
+          <select id="bankAccount" class="form-input" required>
+            <option value="">Select bank account</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-primary btn-lg btn-full">Confirm Withdrawal</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADD BANK MODAL ══ -->
+<div class="modal" id="addBankModal">
+  <div class="modal-overlay" onclick="closeAddBankModal()"></div>
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeAddBankModal()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    <div class="modal-header">
+      <h2 class="modal-title">Add Bank Account</h2>
+      <p class="modal-subtitle">Add your Nigerian bank for Euro withdrawals</p>
+    </div>
+    <div class="modal-body">
+      <form id="addBankForm" onsubmit="submitBankAccount(event)">
+        <div class="form-group">
+          <label class="form-label" for="bankName">Bank Name</label>
+          <select id="bankName" class="form-input" required>
+            <option value="">Select your bank</option>
+            <option value="access">Access Bank</option>
+            <option value="gtb">GTBank</option>
+            <option value="firstbank">First Bank</option>
+            <option value="uba">UBA</option>
+            <option value="zenith">Zenith Bank</option>
+            <option value="kuda">Kuda Bank</option>
+            <option value="opay">OPay</option>
+            <option value="palmpay">PalmPay</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="accountNumber">Account Number</label>
+          <input type="text" id="accountNumber" class="form-input" placeholder="10-digit account number" maxlength="10" pattern="[0-9]{10}" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="accountName">Account Name</label>
+          <input type="text" id="accountName" class="form-input" placeholder="Account name" readonly>
+        </div>
+        <button type="submit" class="btn-primary btn-lg btn-full">Add Bank Account</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ══ GO BACK MODAL ══ -->
+<div class="go-back-modal-overlay" id="goBackModal">
+  <div class="go-back-modal">
+    <div class="go-back-modal-icon">⚠️</div>
+    <h3 class="go-back-modal-title">Go Back to Package Selection?</h3>
+    <p class="go-back-modal-body">If you <strong>haven't made payment yet</strong> or accidentally bypassed the payment step, you can restart and select your package correctly.</p>
+    <p class="go-back-modal-note"><strong>Already paid?</strong> Do NOT go back — your payment is being verified. Contact admin on Telegram for a faster response.</p>
+    <div class="go-back-modal-actions">
+      <button class="go-back-modal-btn-confirm" onclick="confirmGoBack()">Yes, Go Back &amp; Restart</button>
+      <button class="go-back-modal-btn-cancel" onclick="closeGoBackModal()">No, I Already Paid — Keep Waiting</button>
+    </div>
+  </div>
+</div>
+
+<!-- App Download Banner -->
+<div class="app-download-banner" id="appDownloadBanner">
+  <button class="app-banner-close" onclick="closeAppBanner()" aria-label="Close">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+  <div class="app-banner-content">
+    <div class="app-banner-icon">✦</div>
+    <div class="app-banner-text">
+      <div class="app-banner-title">📱 Get the VAULTRA App</div>
+      <div class="app-banner-subtitle">Earn on the go · Fast &amp; Secure</div>
+    </div>
+    <button class="app-banner-download" onclick="showNotification('info','Coming Soon','The VAULTRA app is launching on Google Play soon!')">
+      Download
+    </button>
+  </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/dashboard.js"></script>
+<script>
+/* ══════════════════════════════════════════════════════════════
+   GLAMOUR NIGERIA — STANDALONE DASHBOARD SCRIPT
+   All logic self-contained. No external JS dependency.
+   ══════════════════════════════════════════════════════════════ */
+
+  // ── State ──────────────────────────────────────────────────
+  let currentPackage = 'glam';
+  let activityFeedEnabled = true;
+  let activityFeedInterval = null;
+  const PACKAGES = {
+    glam:    { label: '✦ Glam Package',    amount: '₦14,000', badge: 'GLAM PACKAGE • ₦12,000 Instant Cashback' },
+    premium: { label: '💎 Premium Package', amount: '₦25,000', badge: 'PREMIUM PACKAGE • ₦20,000 Instant Cashback' }
+  };
+
+  // ── Page Switching ──────────────────────────────────────────
+  function switchPage(page) {
+    document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item, .bottom-nav-item').forEach(n => n.classList.remove('active'));
+
+    const pageMap = {
+      home: 'homePage', gigs: 'gigsPage', earnings: 'earningsPage',
+      wallet: 'walletPage', support: 'supportPage', profile: 'profilePage'
+    };
+    const el = document.getElementById(pageMap[page]);
+    if (el) el.classList.add('active');
+
+    document.querySelectorAll(`[data-page="${page}"]`).forEach(n => n.classList.add('active'));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    closeSidebar();
+  }
+
+  // ── Sidebar ─────────────────────────────────────────────────
+  function toggleSidebar() {
+    const sidebar  = document.getElementById('sidebar');
+    const overlay  = document.getElementById('sidebarOverlay');
+    const hamburger = document.getElementById('hamburgerBtn');
+    sidebar.classList.toggle('mobile-open');
+    overlay.classList.toggle('active');
+    hamburger.classList.toggle('open');
+  }
+  function closeSidebar() {
+    const sidebar  = document.getElementById('sidebar');
+    const overlay  = document.getElementById('sidebarOverlay');
+    const hamburger = document.getElementById('hamburgerBtn');
+    if (sidebar)   sidebar.classList.remove('mobile-open');
+    if (overlay)   overlay.classList.remove('active');
+    if (hamburger) hamburger.classList.remove('open');
+  }
+
+  // ── Payment Modal ───────────────────────────────────────────
+  function openPaymentModal() {
+    const modal = document.getElementById('paymentModal');
+    if (modal) {
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      updateModalPackageDisplay();
+    }
+  }
+  function closePaymentModal() {
+    const modal = document.getElementById('paymentModal');
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
+  function updateModalPackageDisplay() {
+    const pkg = PACKAGES[currentPackage];
+    const amountEl = document.getElementById('modalAmountDisplay');
+    const badgeEl  = document.getElementById('modalPackageBadge');
+    if (amountEl) amountEl.textContent = pkg.amount;
+    if (badgeEl)  badgeEl.textContent  = pkg.badge;
+  }
+
+  // ── Switch Locked Package ───────────────────────────────────
+  function switchLockedPackage(type) {
+    currentPackage = type;
+    const pkg = PACKAGES[type];
+
+    // Update locked state display
+    const nameEl   = document.getElementById('lockedPackageName');
+    const amountEl = document.getElementById('lockedPackageAmount');
+    if (nameEl)   nameEl.textContent = pkg.label;
+    if (amountEl) {
+      amountEl.innerHTML = pkg.amount + ' <span>One-time Glam Fee</span>';
+    }
+
+    // Style switcher buttons
+    const glamBtn    = document.getElementById('switchGlamBtn');
+    const premiumBtn = document.getElementById('switchPremiumBtn');
+    if (glamBtn) {
+      glamBtn.style.borderColor = type === 'glam' ? 'rgba(201,168,76,0.7)' : 'rgba(201,168,76,0.2)';
+      glamBtn.style.background  = type === 'glam' ? 'rgba(201,168,76,0.18)' : 'rgba(201,168,76,0.06)';
+    }
+    if (premiumBtn) {
+      premiumBtn.style.borderColor = type === 'premium' ? 'rgba(245,158,11,0.7)' : 'rgba(245,158,11,0.2)';
+      premiumBtn.style.background  = type === 'premium' ? 'rgba(245,158,11,0.12)' : 'rgba(245,158,11,0.04)';
+    }
+  }
+
+  // ── Confirm Payment (I have made payment) ───────────────────
+  function confirmPaymentNew() {
+    closePaymentModal();
+
+    // Show loading overlay
+    const overlay = document.getElementById('loadingOverlayPayment');
+    if (overlay) overlay.classList.add('active');
+
+    setTimeout(() => {
+      if (overlay) overlay.classList.remove('active');
+
+      // Move user to verification state
+      setUserState('verification');
+
+      // Open Telegram in new tab
+      window.open('https://t.me/VAULTRA_SUPPORT?text=Hi%20VAULTRA%20Official%20i%20am%20ready%20to%20get%20started%20what%20are%20the%20procedures%3F', '_blank');
+
+      showNotification('success', 'Payment Submitted', 'Send your payment proof to Telegram admin for fast verification.');
+    }, 3000);
+  }
+
+  // ── Copy Account Number ─────────────────────────────────────
+  function copyAccountNumberNew() {
+    const numEl    = document.getElementById('modalBankNum');
+    const textEl   = document.getElementById('copyTextNew');
+    const iconEl   = document.getElementById('copyIconSvg');
+    const toCopy   = numEl ? numEl.textContent.trim() : '3002381140';
+
+    navigator.clipboard.writeText(toCopy).then(() => {
+      if (textEl) textEl.textContent = 'Copied!';
+      if (iconEl) iconEl.style.stroke = 'var(--gold, #c9a84c)';
+      setTimeout(() => {
+        if (textEl) textEl.textContent = 'Copy';
+        if (iconEl) iconEl.style.stroke = '';
+      }, 2000);
+    }).catch(() => {
+      // Fallback for older browsers
+      const ta = document.createElement('textarea');
+      ta.value = toCopy;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      if (textEl) textEl.textContent = 'Copied!';
+      setTimeout(() => { if (textEl) textEl.textContent = 'Copy'; }, 2000);
+    });
+  }
+
+  // ── Withdraw Modal ──────────────────────────────────────────
+  function openWithdrawModal() {
+    const modal = document.getElementById('withdrawModal');
+    if (modal) {
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+  function closeWithdrawModal() {
+    const modal = document.getElementById('withdrawModal');
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
+
+  // ── Add Bank Modal ──────────────────────────────────────────
+  function openAddBankModal() {
+    const modal = document.getElementById('addBankModal');
+    if (modal) {
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+  function closeAddBankModal() {
+    const modal = document.getElementById('addBankModal');
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
+
+  // ── Withdrawal form handlers ────────────────────────────────
+  function setAmount(val) {
+    const input = document.getElementById('withdrawAmount');
+    if (input) input.value = val;
+  }
+  function setAmountMax() {
+    const input = document.getElementById('withdrawAmount');
+    if (input) input.value = 0; // Replace with real balance when integrated
+  }
+  function submitWithdrawal(e) {
+    e.preventDefault();
+    showNotification('info', 'Withdrawal Requested', 'Your withdrawal request has been submitted and will be processed within 24 hours.');
+    closeWithdrawModal();
+  }
+  function submitBankAccount(e) {
+    e.preventDefault();
+    showNotification('success', 'Bank Added', 'Your bank account has been saved successfully.');
+    closeAddBankModal();
+  }
+
+  // ── Referral Copy ───────────────────────────────────────────
+  function copyReferralCode() {
+    const code = document.getElementById('referralCode');
+    const toCopy = code ? 'https://vaultrang.com/signup?ref=' + code.textContent.trim() : '';
+    if (!toCopy) return;
+    navigator.clipboard.writeText(toCopy).then(() => {
+      showNotification('success', 'Link Copied!', 'Your referral link has been copied to clipboard.');
+    }).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = toCopy;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showNotification('success', 'Link Copied!', 'Your referral link has been copied to clipboard.');
+    });
+  }
+
+  // ── Go Back Modal ───────────────────────────────────────────
+  function showGoBackModal() {
+    const modal = document.getElementById('goBackModal');
+    if (modal) modal.classList.add('active');
+  }
+  function closeGoBackModal() {
+    const modal = document.getElementById('goBackModal');
+    if (modal) modal.classList.remove('active');
+  }
+  function confirmGoBack() {
+    closeGoBackModal();
+    // Reset to locked state
+    setUserState('locked');
+    showNotification('info', 'Restarted', 'Please select your package and complete payment.');
+  }
+
+  // ── Telegram Verify ─────────────────────────────────────────
+  function openTelegramVerify() {
+    window.open('https://t.me/VAULTRA_SUPPORT?text=Hi%20VAULTRA%20Official%20i%20am%20ready%20to%20get%20started%20what%20are%20the%20procedures%3F', '_blank');
+  }
+
+  // ── Feature Access Gate ─────────────────────────────────────
+  function checkFeatureAccess(featureName) {
+    const state = getUserState();
+    if (state === 'verified') {
+      showNotification('info', featureName, 'Redirecting you to your ' + featureName + ' channel...');
+    } else if (state === 'verification') {
+      showNotification('info', 'Awaiting Verification', 'Your account is being verified. This usually takes 1–24 hours.');
+    } else {
+      openPaymentModal();
+    }
+  }
+
+  // ── Earnings Period ─────────────────────────────────────────
+  function changePeriod(period, e) {
+    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+    if (e && e.target) e.target.classList.add('active');
+    // Placeholder: update earnings display by period
+    const labels = { today: 'Today', week: 'This Week', month: 'This Month', all: 'All Time' };
+    const el = document.getElementById('periodEarningsPage');
+    if (el) el.textContent = '€0.00';
+  }
+
+  // ── FAQ Toggle ──────────────────────────────────────────────
+  function toggleFaq(el) {
+    const answer   = el.querySelector('.faq-answer');
+    const isOpen   = el.classList.contains('open');
+    // Close all others
+    document.querySelectorAll('.faq-item.open').forEach(item => {
+      item.classList.remove('open');
+      const a = item.querySelector('.faq-answer');
+      if (a) a.style.maxHeight = null;
+    });
+    if (!isOpen && answer) {
+      el.classList.add('open');
+      answer.style.maxHeight = answer.scrollHeight + 'px';
+    }
+  }
+
+  // ── App Banner ──────────────────────────────────────────────
+  function closeAppBanner() {
+    const banner = document.getElementById('appDownloadBanner');
+    if (banner) {
+      banner.classList.remove('show');
+      setTimeout(() => banner.style.display = 'none', 500);
+    }
+  }
+
+  // ── Activity Feed Toggle ────────────────────────────────────
+  function toggleActivityFeed(enabled) {
+    activityFeedEnabled = enabled;
+    if (!enabled) {
+      clearInterval(activityFeedInterval);
+    } else {
+      startActivityFeed();
+    }
+  }
+
+  // ── Notification Toast ──────────────────────────────────────
+  function showNotification(type, title, message) {
+    const existing = document.getElementById('glamNotification');
+    if (existing) existing.remove();
+
+    const colors = {
+      success: { bg: 'rgba(34,197,94,0.12)',  border: 'rgba(34,197,94,0.3)',  icon: '✓', color: '#22c55e' },
+      error:   { bg: 'rgba(239,68,68,0.12)',  border: 'rgba(239,68,68,0.3)',  icon: '✕', color: '#ef4444' },
+      info:    { bg: 'rgba(59,130,246,0.12)', border: 'rgba(59,130,246,0.3)', icon: 'ℹ', color: '#3b82f6' },
+      warning: { bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.3)', icon: '⚠', color: '#f59e0b' }
+    };
+    const c = colors[type] || colors.info;
+
+    const notif = document.createElement('div');
+    notif.id = 'glamNotification';
+    notif.style.cssText = `
+      position:fixed;top:20px;right:20px;z-index:9999;
+      background:linear-gradient(135deg,rgba(13,8,32,0.98),rgba(21,15,40,0.99));
+      border:1px solid ${c.border};border-left:3px solid ${c.color};
+      border-radius:14px;padding:14px 16px;min-width:280px;max-width:340px;
+      box-shadow:0 8px 32px rgba(0,0,0,0.5);
+      display:flex;align-items:flex-start;gap:12px;
+      animation:slideInRight 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      font-family:'Inter',sans-serif;
+    `;
+    notif.innerHTML = `
+      <div style="width:32px;height:32px;border-radius:50%;background:${c.bg};border:1px solid ${c.border};
+        display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${c.color};font-size:14px;font-weight:700;">
+        ${c.icon}
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.95);margin-bottom:3px;">${title}</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.5;">${message}</div>
+      </div>
+      <button onclick="this.parentElement.remove()" style="background:none;border:none;color:rgba(255,255,255,0.3);
+        cursor:pointer;font-size:16px;line-height:1;padding:0;flex-shrink:0;margin-top:1px;">✕</button>
+    `;
+    document.body.appendChild(notif);
+    setTimeout(() => {
+      if (notif.parentElement) {
+        notif.style.animation = 'slideOutRight 0.35s ease forwards';
+        setTimeout(() => notif.remove(), 350);
+      }
+    }, 4500);
+  }
+
+  // ── User State Helpers ──────────────────────────────────────
+  function getUserState() {
+    return sessionStorage.getItem('glamUserState') || 'locked';
+  }
+  function setUserState(state) {
+    sessionStorage.setItem('glamUserState', state);
+    renderDashboardState(state);
+  }
+  function renderDashboardState(state) {
+    const locked   = document.getElementById('lockedState');
+    const pending  = document.getElementById('verificationState');
+    const verified = document.getElementById('verifiedState');
+    if (locked)   locked.style.display   = state === 'locked'       ? 'block' : 'none';
+    if (pending)  pending.style.display  = state === 'verification' ? 'block' : 'none';
+    if (verified) verified.style.display = state === 'verified'     ? 'block' : 'none';
+  }
+
+  // ── Logout ──────────────────────────────────────────────────
+  function logout() {
+    if (confirm('Are you sure you want to sign out?')) {
+      sessionStorage.clear();
+      window.location.href = 'index.html';
+    }
+  }
+
+  // ── Live Activity Feed ──────────────────────────────────────
+  const ACTIVITY_EVENTS = [
+    { type: 'earning',    emoji: '💰', messages: ['<strong>Ada O.</strong> earned €2 on Vault Lifestyle', '<strong>Chidi M.</strong> completed 1hr on Vault Realtime', '<strong>Ngozi F.</strong> submitted a Vault Script2Cash script'], locations: ['Lagos', 'Abuja', 'Port Harcourt', 'Ibadan', 'Kano'] },
+    { type: 'withdrawal', emoji: '🏦', messages: ['<strong>Emeka K.</strong> withdrew €20 to GTBank', '<strong>Fatima A.</strong> withdrew €50 to Opay', '<strong>Tunde B.</strong> withdrew €15 to Kuda'], locations: ['Enugu', 'Calabar', 'Jos', 'Owerri'] },
+    { type: 'signup',     emoji: '🎉', messages: ['<strong>Amaka N.</strong> just joined VAULTRA Nigeria', '<strong>Uche P.</strong> activated their account', '<strong>Blessing I.</strong> unlocked all 7 channels'], locations: ['Benin City', 'Warri', 'Asaba', 'Abeokuta'] }
+  ];
+  function startActivityFeed() {
+    const container = document.getElementById('activity-feed-container');
+    if (!container) return;
+    clearInterval(activityFeedInterval);
+
+    function showToast() {
+      if (!activityFeedEnabled) return;
+      const group   = ACTIVITY_EVENTS[Math.floor(Math.random() * ACTIVITY_EVENTS.length)];
+      const msg     = group.messages[Math.floor(Math.random() * group.messages.length)];
+      const loc     = group.locations[Math.floor(Math.random() * group.locations.length)];
+      const mins    = Math.floor(Math.random() * 4) + 1;
+
+      const toast = document.createElement('div');
+      toast.className = 'activity-toast';
+      toast.innerHTML = `
+        <div class="toast-avatar ${group.type}">${group.emoji}</div>
+        <div class="toast-body">
+          <div class="toast-message">${msg}</div>
+          <div class="toast-meta">
+            <span class="toast-time">${mins}m ago</span>
+            <span class="toast-dot"></span>
+            <span class="toast-location">📍 ${loc}</span>
+          </div>
+        </div>
+        <button class="toast-close" onclick="this.closest('.activity-toast').remove()">✕</button>
+      `;
+      container.prepend(toast);
+      requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('toast-show')));
+
+      setTimeout(() => {
+        toast.classList.add('toast-hide');
+        setTimeout(() => toast.remove(), 400);
+      }, 5000);
+
+      // Keep max 3 toasts
+      const toasts = container.querySelectorAll('.activity-toast');
+      if (toasts.length > 3) toasts[toasts.length - 1].remove();
+    }
+
+    // Initial delay then regular interval
+    setTimeout(showToast, 4000);
+    activityFeedInterval = setInterval(showToast, 9000);
+  }
+
+  // ── Date Display ────────────────────────────────────────────
+  function setCurrentDate() {
+    const el = document.getElementById('currentDate');
+    if (!el) return;
+    const d = new Date();
+    el.textContent = d.toLocaleDateString('en-NG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  // ── App Banner auto-show ────────────────────────────────────
+  function initAppBanner() {
+    const banner = document.getElementById('appDownloadBanner');
+    if (!banner) return;
+    setTimeout(() => banner.classList.add('show'), 8000);
+  }
+
+  // ── Modal close on overlay click ─────────────────────────────
+  // (modals already have overlay onclick in HTML — this adds ESC support)
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closePaymentModal();
+      closeWithdrawModal();
+      closeAddBankModal();
+      closeGoBackModal();
+    }
+  });
+
+  // ── FAQ answer style init ────────────────────────────────────
+  function initFaq() {
+    document.querySelectorAll('.faq-answer').forEach(a => {
+      a.style.maxHeight    = '0';
+      a.style.overflow     = 'hidden';
+      a.style.transition   = 'max-height 0.35s ease';
+    });
+  }
+
+  // ── Boot ─────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function () {
+    // Show locked state by default (replace with real auth check as needed)
+    renderDashboardState(getUserState());
+    setCurrentDate();
+    startActivityFeed();
+    initAppBanner();
+    initFaq();
+  });
+</script>
+</body>
+</html>
