@@ -40,43 +40,32 @@ router.post('/verify/:userId', async (req, res) => {
     }
 
     const vaultRewards = { sterling: 7000, sovereign: 15000 };
-    const plan = req.body.plan || 'sterling';
 
-    // Activate user with updateOne — never touches password field
-    await User.updateOne(
-      { _id: user._id },
-      {
-        $set: {
-          plan,
-          status:      'verified',
-          activatedAt: new Date(),
-        },
-        $inc: { 'wallet.vaultRewardNaira': vaultRewards[plan] || 7000 }
-      }
-    );
+    user.plan        = plan || 'sterling';
+    user.status      = 'verified';
+    user.activatedAt = new Date();
+    user.wallet.vaultRewardNaira += vaultRewards[user.plan] || 7000;
+    await user.save({ validateBeforeSave: false });
 
-    // Credit level 1 referrer
+    // Credit referrer if applicable
     if (user.referredBy) {
-      const bonus = plan === 'sovereign' ? 4000 : 2000;
-      await User.updateOne(
-        { _id: user.referredBy },
-        {
-          $inc: { 'wallet.referralNaira': bonus },
-          $addToSet: { directReferrals: user._id }
-        }
-      );
+      const referrer = await User.findById(user.referredBy);
+      if (referrer) {
+        const bonus = user.plan === 'sovereign' ? 4000 : 2000;
+        referrer.wallet.referralNaira += bonus;
+        referrer.directReferrals.addToSet(user._id);
+        await referrer.save({ validateBeforeSave: false });
+      }
     }
-    // Credit level 2 referrer
     if (user.referredByLevel2) {
-      await User.updateOne(
-        { _id: user.referredByLevel2 },
-        { $inc: { 'wallet.referralNaira': plan === 'sovereign' ? 800 : 400 } }
-      );
+      const l2 = await User.findById(user.referredByLevel2);
+      if (l2) {
+        l2.wallet.referralNaira += user.plan === 'sovereign' ? 800 : 400;
+        await l2.save({ validateBeforeSave: false });
+      }
     }
 
-    const updatedUser = await User.findById(user._id);
-
-    res.json({ success: true, message: `User ${user.email} verified on ${plan} plan.`, user: updatedUser.toSafeObject() });
+    res.json({ success: true, message: `User ${user.email} verified on ${user.plan} plan.`, user: user.toSafeObject() });
 
   } catch (err) {
     console.error('Admin verify error:', err);

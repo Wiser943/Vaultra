@@ -138,37 +138,26 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         user.activatedAt = new Date();
         user.wallet.vaultRewardNaira += planData.vaultReward;
 
-        // Credit referral bonuses — use updateOne to avoid pre('save') hook
+        // Credit referral bonuses
         if (user.referredBy) {
-          const bonus = REFERRAL_BONUS.direct[payment.plan] || 2000;
-          await User.updateOne(
-            { _id: user.referredBy },
-            {
-              $inc: { 'wallet.referralNaira': bonus },
-              $addToSet: { directReferrals: user._id }
-            }
-          );
+          const referrer = await User.findById(user.referredBy);
+          if (referrer) {
+            const bonus = REFERRAL_BONUS.direct[payment.plan] || 2000;
+            referrer.wallet.referralNaira += bonus;
+            referrer.directReferrals.addToSet(user._id);
+            await referrer.save({ validateBeforeSave: false });
+          }
         }
         if (user.referredByLevel2) {
-          const bonus = REFERRAL_BONUS.level2[payment.plan] || 400;
-          await User.updateOne(
-            { _id: user.referredByLevel2 },
-            { $inc: { 'wallet.referralNaira': bonus } }
-          );
+          const level2Referrer = await User.findById(user.referredByLevel2);
+          if (level2Referrer) {
+            const bonus = REFERRAL_BONUS.level2[payment.plan] || 400;
+            level2Referrer.wallet.referralNaira += bonus;
+            await level2Referrer.save({ validateBeforeSave: false });
+          }
         }
 
-        // Activate user account
-        await User.updateOne(
-          { _id: user._id },
-          {
-            $set: {
-              plan:        payment.plan,
-              status:      'verified',
-              activatedAt: new Date(),
-            },
-            $inc: { 'wallet.vaultRewardNaira': planData.vaultReward }
-          }
-        );
+        await user.save({ validateBeforeSave: false });
         console.log(`✅ User ${user.email} activated on ${payment.plan} plan`);
       }
     }
