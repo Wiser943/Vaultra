@@ -75,15 +75,6 @@ router.post('/signup', authLimiter, async (req, res) => {
 
   } catch (err) {
     console.error('Signup error:', err);
-    // MongoDB duplicate key error (email or referralCode collision)
-    if (err.code === 11000) {
-      const field = Object.keys(err.keyPattern || {})[0];
-      if (field === 'email') {
-        return res.status(409).json({ success: false, message: 'An account with this email already exists.' });
-      }
-      // referralCode collision — extremely rare, just retry
-      return res.status(409).json({ success: false, message: 'Registration conflict. Please try again.' });
-    }
     res.status(500).json({ success: false, message: 'Something went wrong. Please try again.' });
   }
 });
@@ -102,12 +93,8 @@ router.post('/signin', authLimiter, async (req, res) => {
       return res.status(401).json({ success: false, message: 'Invalid email or password.' });
     }
 
-    // ⚠️ Use updateOne instead of user.save() to avoid triggering
-    // the pre('save') password hashing hook a second time
-    await User.updateOne(
-      { _id: user._id },
-      { $set: { lastLoginAt: new Date() } }
-    );
+    user.lastLoginAt = new Date();
+    await user.save({ validateBeforeSave: false });
 
     signToken(user._id, res);
 
