@@ -5,15 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard — VAULTRA Nigeria | vaultrang.com</title>
   <meta name="robots" content="noindex, nofollow">
-      <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-    <script>
-      eruda.init();
-    </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="images/favicon.png">
   <link rel="stylesheet" href="css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+  <script>
+    eruda.init();
+  </script>
   <style>
     /* Page switching */
     .page-content { display: none; }
@@ -1286,8 +1286,470 @@
     </button>
   </div>
 </div>
+<!---
+<script src="js/api.js"></script>
+<script src="js/dashboard.js"></script>
+<script>
+/* ══════════════════════════════════════════════════════════════
+   GLAMOUR NIGERIA — STANDALONE DASHBOARD SCRIPT
+   All logic self-contained. No external JS dependency.
+   ══════════════════════════════════════════════════════════════ */
 
-<script src="js/api.js" defer></script>
-<script src="js/dashboard.js" defer></script>
+  // ── State ──────────────────────────────────────────────────
+  let currentPackage = 'glam';
+  let activityFeedEnabled = true;
+  let activityFeedInterval = null;
+  const PACKAGES = {
+    glam:    { label: '✦ Glam Package',    amount: '₦14,000', badge: 'GLAM PACKAGE • ₦12,000 Instant Cashback' },
+    premium: { label: '💎 Premium Package', amount: '₦25,000', badge: 'PREMIUM PACKAGE • ₦20,000 Instant Cashback' }
+  };
+
+  // ── Page Switching ──────────────────────────────────────────
+  function switchPage(page) {
+    document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item, .bottom-nav-item').forEach(n => n.classList.remove('active'));
+
+    const pageMap = {
+      home: 'homePage', gigs: 'gigsPage', earnings: 'earningsPage',
+      wallet: 'walletPage', support: 'supportPage', profile: 'profilePage'
+    };
+    const el = document.getElementById(pageMap[page]);
+    if (el) el.classList.add('active');
+
+    document.querySelectorAll(`[data-page="${page}"]`).forEach(n => n.classList.add('active'));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    closeSidebar();
+  }
+
+  // ── Sidebar ─────────────────────────────────────────────────
+  function toggleSidebar() {
+    const sidebar  = document.getElementById('sidebar');
+    const overlay  = document.getElementById('sidebarOverlay');
+    const hamburger = document.getElementById('hamburgerBtn');
+    sidebar.classList.toggle('mobile-open');
+    overlay.classList.toggle('active');
+    hamburger.classList.toggle('open');
+  }
+  function closeSidebar() {
+    const sidebar  = document.getElementById('sidebar');
+    const overlay  = document.getElementById('sidebarOverlay');
+    const hamburger = document.getElementById('hamburgerBtn');
+    if (sidebar)   sidebar.classList.remove('mobile-open');
+    if (overlay)   overlay.classList.remove('active');
+    if (hamburger) hamburger.classList.remove('open');
+  }
+
+  // ── Payment Modal ───────────────────────────────────────────
+  function openPaymentModal() {
+    const modal = document.getElementById('paymentModal');
+    if (modal) {
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      updateModalPackageDisplay();
+    }
+  }
+  function closePaymentModal() {
+    const modal = document.getElementById('paymentModal');
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
+  function updateModalPackageDisplay() {
+    const pkg = PACKAGES[currentPackage];
+    const amountEl = document.getElementById('modalAmountDisplay');
+    const badgeEl  = document.getElementById('modalPackageBadge');
+    if (amountEl) amountEl.textContent = pkg.amount;
+    if (badgeEl)  badgeEl.textContent  = pkg.badge;
+  }
+
+  // ── Switch Locked Package ───────────────────────────────────
+  function switchLockedPackage(type) {
+    currentPackage = type;
+    const pkg = PACKAGES[type];
+
+    // Update locked state display
+    const nameEl   = document.getElementById('lockedPackageName');
+    const amountEl = document.getElementById('lockedPackageAmount');
+    if (nameEl)   nameEl.textContent = pkg.label;
+    if (amountEl) {
+      amountEl.innerHTML = pkg.amount + ' <span>One-time Glam Fee</span>';
+    }
+
+    // Style switcher buttons
+    const glamBtn    = document.getElementById('switchGlamBtn');
+    const premiumBtn = document.getElementById('switchPremiumBtn');
+    if (glamBtn) {
+      glamBtn.style.borderColor = type === 'glam' ? 'rgba(201,168,76,0.7)' : 'rgba(201,168,76,0.2)';
+      glamBtn.style.background  = type === 'glam' ? 'rgba(201,168,76,0.18)' : 'rgba(201,168,76,0.06)';
+    }
+    if (premiumBtn) {
+      premiumBtn.style.borderColor = type === 'premium' ? 'rgba(245,158,11,0.7)' : 'rgba(245,158,11,0.2)';
+      premiumBtn.style.background  = type === 'premium' ? 'rgba(245,158,11,0.12)' : 'rgba(245,158,11,0.04)';
+    }
+  }
+
+  // ── Confirm Payment (I have made payment) ───────────────────
+  function confirmPaymentNew() {
+    closePaymentModal();
+
+    // Show loading overlay
+    const overlay = document.getElementById('loadingOverlayPayment');
+    if (overlay) overlay.classList.add('active');
+
+    setTimeout(() => {
+      if (overlay) overlay.classList.remove('active');
+
+      // Move user to verification state
+      setUserState('verification');
+
+      // Open Telegram in new tab
+      window.open('https://t.me/VAULTRA_SUPPORT?text=Hi%20VAULTRA%20Official%20i%20am%20ready%20to%20get%20started%20what%20are%20the%20procedures%3F', '_blank');
+
+      showNotification('success', 'Payment Submitted', 'Send your payment proof to Telegram admin for fast verification.');
+    }, 3000);
+  }
+
+  // ── Copy Account Number ─────────────────────────────────────
+  function copyAccountNumberNew() {
+    const numEl    = document.getElementById('modalBankNum');
+    const textEl   = document.getElementById('copyTextNew');
+    const iconEl   = document.getElementById('copyIconSvg');
+    const toCopy   = numEl ? numEl.textContent.trim() : '3002381140';
+
+    navigator.clipboard.writeText(toCopy).then(() => {
+      if (textEl) textEl.textContent = 'Copied!';
+      if (iconEl) iconEl.style.stroke = 'var(--gold, #c9a84c)';
+      setTimeout(() => {
+        if (textEl) textEl.textContent = 'Copy';
+        if (iconEl) iconEl.style.stroke = '';
+      }, 2000);
+    }).catch(() => {
+      // Fallback for older browsers
+      const ta = document.createElement('textarea');
+      ta.value = toCopy;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      if (textEl) textEl.textContent = 'Copied!';
+      setTimeout(() => { if (textEl) textEl.textContent = 'Copy'; }, 2000);
+    });
+  }
+
+  // ── Withdraw Modal ──────────────────────────────────────────
+  function openWithdrawModal() {
+    const modal = document.getElementById('withdrawModal');
+    if (modal) {
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+  function closeWithdrawModal() {
+    const modal = document.getElementById('withdrawModal');
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
+
+  // ── Add Bank Modal ──────────────────────────────────────────
+  function openAddBankModal() {
+    const modal = document.getElementById('addBankModal');
+    if (modal) {
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+  function closeAddBankModal() {
+    const modal = document.getElementById('addBankModal');
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
+
+  // ── Withdrawal form handlers ────────────────────────────────
+  function setAmount(val) {
+    const input = document.getElementById('withdrawAmount');
+    if (input) input.value = val;
+  }
+  function setAmountMax() {
+    const input = document.getElementById('withdrawAmount');
+    if (input) input.value = 0; // Replace with real balance when integrated
+  }
+  function submitWithdrawal(e) {
+    e.preventDefault();
+    showNotification('info', 'Withdrawal Requested', 'Your withdrawal request has been submitted and will be processed within 24 hours.');
+    closeWithdrawModal();
+  }
+  function submitBankAccount(e) {
+    e.preventDefault();
+    showNotification('success', 'Bank Added', 'Your bank account has been saved successfully.');
+    closeAddBankModal();
+  }
+
+  // ── Referral Copy ───────────────────────────────────────────
+  function copyReferralCode() {
+    const code = document.getElementById('referralCode');
+    const toCopy = code ? 'https://vaultrang.com/signup?ref=' + code.textContent.trim() : '';
+    if (!toCopy) return;
+    navigator.clipboard.writeText(toCopy).then(() => {
+      showNotification('success', 'Link Copied!', 'Your referral link has been copied to clipboard.');
+    }).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = toCopy;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showNotification('success', 'Link Copied!', 'Your referral link has been copied to clipboard.');
+    });
+  }
+
+  // ── Go Back Modal ───────────────────────────────────────────
+  function showGoBackModal() {
+    const modal = document.getElementById('goBackModal');
+    if (modal) modal.classList.add('active');
+  }
+  function closeGoBackModal() {
+    const modal = document.getElementById('goBackModal');
+    if (modal) modal.classList.remove('active');
+  }
+  function confirmGoBack() {
+    closeGoBackModal();
+    // Reset to locked state
+    setUserState('locked');
+    showNotification('info', 'Restarted', 'Please select your package and complete payment.');
+  }
+
+  // ── Telegram Verify ─────────────────────────────────────────
+  function openTelegramVerify() {
+    window.open('https://t.me/VAULTRA_SUPPORT?text=Hi%20VAULTRA%20Official%20i%20am%20ready%20to%20get%20started%20what%20are%20the%20procedures%3F', '_blank');
+  }
+
+  // ── Feature Access Gate ─────────────────────────────────────
+  function checkFeatureAccess(featureName) {
+    const state = getUserState();
+    if (state === 'verified') {
+      showNotification('info', featureName, 'Redirecting you to your ' + featureName + ' channel...');
+    } else if (state === 'verification') {
+      showNotification('info', 'Awaiting Verification', 'Your account is being verified. This usually takes 1–24 hours.');
+    } else {
+      openPaymentModal();
+    }
+  }
+
+  // ── Earnings Period ─────────────────────────────────────────
+  function changePeriod(period, e) {
+    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+    if (e && e.target) e.target.classList.add('active');
+    // Placeholder: update earnings display by period
+    const labels = { today: 'Today', week: 'This Week', month: 'This Month', all: 'All Time' };
+    const el = document.getElementById('periodEarningsPage');
+    if (el) el.textContent = '€0.00';
+  }
+
+  // ── FAQ Toggle ──────────────────────────────────────────────
+  function toggleFaq(el) {
+    const answer   = el.querySelector('.faq-answer');
+    const isOpen   = el.classList.contains('open');
+    // Close all others
+    document.querySelectorAll('.faq-item.open').forEach(item => {
+      item.classList.remove('open');
+      const a = item.querySelector('.faq-answer');
+      if (a) a.style.maxHeight = null;
+    });
+    if (!isOpen && answer) {
+      el.classList.add('open');
+      answer.style.maxHeight = answer.scrollHeight + 'px';
+    }
+  }
+
+  // ── App Banner ──────────────────────────────────────────────
+  function closeAppBanner() {
+    const banner = document.getElementById('appDownloadBanner');
+    if (banner) {
+      banner.classList.remove('show');
+      setTimeout(() => banner.style.display = 'none', 500);
+    }
+  }
+
+  // ── Activity Feed Toggle ────────────────────────────────────
+  function toggleActivityFeed(enabled) {
+    activityFeedEnabled = enabled;
+    if (!enabled) {
+      clearInterval(activityFeedInterval);
+    } else {
+      startActivityFeed();
+    }
+  }
+
+  // ── Notification Toast ──────────────────────────────────────
+  function showNotification(type, title, message) {
+    const existing = document.getElementById('glamNotification');
+    if (existing) existing.remove();
+
+    const colors = {
+      success: { bg: 'rgba(34,197,94,0.12)',  border: 'rgba(34,197,94,0.3)',  icon: '✓', color: '#22c55e' },
+      error:   { bg: 'rgba(239,68,68,0.12)',  border: 'rgba(239,68,68,0.3)',  icon: '✕', color: '#ef4444' },
+      info:    { bg: 'rgba(59,130,246,0.12)', border: 'rgba(59,130,246,0.3)', icon: 'ℹ', color: '#3b82f6' },
+      warning: { bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.3)', icon: '⚠', color: '#f59e0b' }
+    };
+    const c = colors[type] || colors.info;
+
+    const notif = document.createElement('div');
+    notif.id = 'glamNotification';
+    notif.style.cssText = `
+      position:fixed;top:20px;right:20px;z-index:9999;
+      background:linear-gradient(135deg,rgba(13,8,32,0.98),rgba(21,15,40,0.99));
+      border:1px solid ${c.border};border-left:3px solid ${c.color};
+      border-radius:14px;padding:14px 16px;min-width:280px;max-width:340px;
+      box-shadow:0 8px 32px rgba(0,0,0,0.5);
+      display:flex;align-items:flex-start;gap:12px;
+      animation:slideInRight 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      font-family:'Inter',sans-serif;
+    `;
+    notif.innerHTML = `
+      <div style="width:32px;height:32px;border-radius:50%;background:${c.bg};border:1px solid ${c.border};
+        display:flex;align-items:center;justify-content:center;flex-shrink:0;color:${c.color};font-size:14px;font-weight:700;">
+        ${c.icon}
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.95);margin-bottom:3px;">${title}</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.5;">${message}</div>
+      </div>
+      <button onclick="this.parentElement.remove()" style="background:none;border:none;color:rgba(255,255,255,0.3);
+        cursor:pointer;font-size:16px;line-height:1;padding:0;flex-shrink:0;margin-top:1px;">✕</button>
+    `;
+    document.body.appendChild(notif);
+    setTimeout(() => {
+      if (notif.parentElement) {
+        notif.style.animation = 'slideOutRight 0.35s ease forwards';
+        setTimeout(() => notif.remove(), 350);
+      }
+    }, 4500);
+  }
+
+  // ── User State Helpers ──────────────────────────────────────
+  function getUserState() {
+    return sessionStorage.getItem('glamUserState') || 'locked';
+  }
+  function setUserState(state) {
+    sessionStorage.setItem('glamUserState', state);
+    renderDashboardState(state);
+  }
+  function renderDashboardState(state) {
+    const locked   = document.getElementById('lockedState');
+    const pending  = document.getElementById('verificationState');
+    const verified = document.getElementById('verifiedState');
+    if (locked)   locked.style.display   = state === 'locked'       ? 'block' : 'none';
+    if (pending)  pending.style.display  = state === 'verification' ? 'block' : 'none';
+    if (verified) verified.style.display = state === 'verified'     ? 'block' : 'none';
+  }
+
+  // ── Logout ──────────────────────────────────────────────────
+  function logout() {
+    if (confirm('Are you sure you want to sign out?')) {
+      sessionStorage.clear();
+      window.location.href = 'index.html';
+    }
+  }
+
+  // ── Live Activity Feed ──────────────────────────────────────
+  const ACTIVITY_EVENTS = [
+    { type: 'earning',    emoji: '💰', messages: ['<strong>Ada O.</strong> earned €2 on Vault Lifestyle', '<strong>Chidi M.</strong> completed 1hr on Vault Realtime', '<strong>Ngozi F.</strong> submitted a Vault Script2Cash script'], locations: ['Lagos', 'Abuja', 'Port Harcourt', 'Ibadan', 'Kano'] },
+    { type: 'withdrawal', emoji: '🏦', messages: ['<strong>Emeka K.</strong> withdrew €20 to GTBank', '<strong>Fatima A.</strong> withdrew €50 to Opay', '<strong>Tunde B.</strong> withdrew €15 to Kuda'], locations: ['Enugu', 'Calabar', 'Jos', 'Owerri'] },
+    { type: 'signup',     emoji: '🎉', messages: ['<strong>Amaka N.</strong> just joined VAULTRA Nigeria', '<strong>Uche P.</strong> activated their account', '<strong>Blessing I.</strong> unlocked all 7 channels'], locations: ['Benin City', 'Warri', 'Asaba', 'Abeokuta'] }
+  ];
+  function startActivityFeed() {
+    const container = document.getElementById('activity-feed-container');
+    if (!container) return;
+    clearInterval(activityFeedInterval);
+
+    function showToast() {
+      if (!activityFeedEnabled) return;
+      const group   = ACTIVITY_EVENTS[Math.floor(Math.random() * ACTIVITY_EVENTS.length)];
+      const msg     = group.messages[Math.floor(Math.random() * group.messages.length)];
+      const loc     = group.locations[Math.floor(Math.random() * group.locations.length)];
+      const mins    = Math.floor(Math.random() * 4) + 1;
+
+      const toast = document.createElement('div');
+      toast.className = 'activity-toast';
+      toast.innerHTML = `
+        <div class="toast-avatar ${group.type}">${group.emoji}</div>
+        <div class="toast-body">
+          <div class="toast-message">${msg}</div>
+          <div class="toast-meta">
+            <span class="toast-time">${mins}m ago</span>
+            <span class="toast-dot"></span>
+            <span class="toast-location">📍 ${loc}</span>
+          </div>
+        </div>
+        <button class="toast-close" onclick="this.closest('.activity-toast').remove()">✕</button>
+      `;
+      container.prepend(toast);
+      requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('toast-show')));
+
+      setTimeout(() => {
+        toast.classList.add('toast-hide');
+        setTimeout(() => toast.remove(), 400);
+      }, 5000);
+
+      // Keep max 3 toasts
+      const toasts = container.querySelectorAll('.activity-toast');
+      if (toasts.length > 3) toasts[toasts.length - 1].remove();
+    }
+
+    // Initial delay then regular interval
+    setTimeout(showToast, 4000);
+    activityFeedInterval = setInterval(showToast, 9000);
+  }
+
+  // ── Date Display ────────────────────────────────────────────
+  function setCurrentDate() {
+    const el = document.getElementById('currentDate');
+    if (!el) return;
+    const d = new Date();
+    el.textContent = d.toLocaleDateString('en-NG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  // ── App Banner auto-show ────────────────────────────────────
+  function initAppBanner() {
+    const banner = document.getElementById('appDownloadBanner');
+    if (!banner) return;
+    setTimeout(() => banner.classList.add('show'), 8000);
+  }
+
+  // ── Modal close on overlay click ─────────────────────────────
+  // (modals already have overlay onclick in HTML — this adds ESC support)
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closePaymentModal();
+      closeWithdrawModal();
+      closeAddBankModal();
+      closeGoBackModal();
+    }
+  });
+
+  // ── FAQ answer style init ────────────────────────────────────
+  function initFaq() {
+    document.querySelectorAll('.faq-answer').forEach(a => {
+      a.style.maxHeight    = '0';
+      a.style.overflow     = 'hidden';
+      a.style.transition   = 'max-height 0.35s ease';
+    });
+  }
+
+  // ── Boot ─────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function () {
+    // Show locked state by default (replace with real auth check as needed)
+    renderDashboardState(getUserState());
+    setCurrentDate();
+    startActivityFeed();
+    initAppBanner();
+    initFaq();
+  });
+</script>-->
 </body>
 </html>
