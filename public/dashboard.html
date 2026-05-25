@@ -1287,21 +1287,7 @@
 </div>
 <script src="js/api.js"></script>
 <script src="js/dashboard.js"></script>
-<script>
-/* ══════════════════════════════════════════════════════════════
-   GLAMOUR NIGERIA — STANDALONE DASHBOARD SCRIPT
-   All logic self-contained. No external JS dependency.
-   ══════════════════════════════════════════════════════════════ */
-
-  // ── State ──────────────────────────────────────────────────
-  let currentPackage = 'glam';
-  let activityFeedEnabled = true;
-  let activityFeedInterval = null;
-  const PACKAGES = {
-    glam:    { label: '✦ Glam Package',    amount: '₦14,000', badge: 'GLAM PACKAGE • ₦12,000 Instant Cashback' },
-    premium: { label: '💎 Premium Package', amount: '₦25,000', badge: 'PREMIUM PACKAGE • ₦20,000 Instant Cashback' }
-  };
-
+<!-- Removed redundant inline script
   // ── Page Switching ──────────────────────────────────────────
   function switchPage(page) {
     document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
@@ -1730,24 +1716,6 @@
     }
   });
 
-  // ── FAQ answer style init ────────────────────────────────────
-  function initFaq() {
-    document.querySelectorAll('.faq-answer').forEach(a => {
-      a.style.maxHeight    = '0';
-      a.style.overflow     = 'hidden';
-      a.style.transition   = 'max-height 0.35s ease';
-    });
-  }
-
-  // ── Boot ─────────────────────────────────────────────────────
-  document.addEventListener('DOMContentLoaded', function () {
-    // Show locked state by default (replace with real auth check as needed)
-    renderDashboardState(getUserState());
-    setCurrentDate();
-    startActivityFeed();
-    initAppBanner();
-    initFaq();
-  });
-</script>-->
+-->
 </body>
 </html>
