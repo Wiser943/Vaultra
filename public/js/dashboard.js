@@ -12,7 +12,7 @@ let activityInterval = null;
 document.addEventListener('DOMContentLoaded', async () => {
 
   // Auth guard — redirect if not logged in
-  //currentUser = await requireAuth('/signin.html');
+  currentUser = await requireAuth('/signin.html');
   if (!currentUser) return;
 
   // Load dashboard data

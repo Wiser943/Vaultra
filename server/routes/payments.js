@@ -61,7 +61,7 @@ router.post('/initiate', protect, async (req, res) => {
           email: req.user.email
         },
         notification_url: `${process.env.APP_URL}/api/payments/webhook`,
-        redirect_url:     `${process.env.APP_URL}/dashboard.html?payment=success`,
+        redirect_url:     `${process.env.APP_URL}/dashboard.html?payment=success&reference=${reference}`,
         narration:        `VAULTRA ${planData.label} activation`,
         channels:         ['card', 'bank_transfer', 'pay_with_bank']
       })
