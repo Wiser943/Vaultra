@@ -12,40 +12,47 @@ const app = express();
 connectDB();
 
 // ── Security & Middleware ────────────────────────────────────
+// CSP is intentionally disabled for now because the current frontend uses
+// Google Fonts, inline styles, inline handlers, JSON-LD, and optional debug tools.
+// Re-enable a stricter CSP after moving inline handlers/styles into external files.
 app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc:  ["'self'"],
-      scriptSrc:   ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
-      styleSrc:    ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
-      fontSrc:     ["'self'", "https://fonts.gstatic.com"],
-      imgSrc:      ["'self'", "data:", "https:"],
-      connectSrc:  ["'self'", "https://api.korapay.com", "https://*.onrender.com"]
-    }
-  }
+  contentSecurityPolicy: false,
+  crossOriginResourcePolicy: false
 }));
 
+const allowedOrigins = (process.env.CORS_ORIGINS || process.env.FRONTEND_URL || process.env.APP_URL || 'http://localhost:8888,http://localhost:3000,http://127.0.0.1:5500')
+  .split(',')
+  .map(origin => origin.trim())
+  .filter(Boolean);
+
 app.use(cors({
-  origin:      process.env.APP_URL || 'http://localhost:3000',
+  origin(origin, callback) {
+    // Allow server-to-server calls, health checks, Postman/curl, and Korapay webhooks.
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
   credentials: true
 }));
 
 app.use(cookieParser());
-app.use(express.json());
 
-// ── Webhook route needs raw body — must come BEFORE express.json ──
-const paymentRoutes = require('./routes/payments');
-app.use('/api/payments', paymentRoutes);
+// Keep the Korapay webhook body raw for HMAC signature verification.
+// All other routes should use JSON parsing.
+app.use((req, res, next) => {
+  if (req.originalUrl === '/api/payments/webhook') return next();
+  return express.json()(req, res, next);
+});
 
 // ── API Routes ───────────────────────────────────────────────
-app.use('/api/auth',  require('./routes/auth'));
-app.use('/api/user',  require('./routes/user'));
-app.use('/api/admin', require('./routes/admin'));
+app.use('/api/payments', require('./routes/payments'));
+app.use('/api/auth',     require('./routes/auth'));
+app.use('/api/user',     require('./routes/user'));
+app.use('/api/admin',    require('./routes/admin'));
 
-// ── Serve Frontend ───────────────────────────────────────────
+// ── Serve Frontend only when this backend is used as a single Render app ──
 app.use(express.static(path.join(__dirname, '../public')));
 
-// SPA fallback — all unknown routes serve index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public', 'index.html'));
 });
@@ -59,7 +66,7 @@ app.use((err, req, res, next) => {
 // ── Start Server ─────────────────────────────────────────────
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 VAULTRA server running on port ${PORT}`);
-  console.log(`   Mode: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`   URL:  http://localhost:${PORT}`);
+  console.log(`VAULTRA server running on port ${PORT}`);
+  console.log(`Mode: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Allowed frontend origins: ${allowedOrigins.join(', ')}`);
 });

@@ -60,8 +60,8 @@ router.post('/initiate', protect, async (req, res) => {
           name:  req.user.fullName,
           email: req.user.email
         },
-        notification_url: `${process.env.APP_URL}/api/payments/webhook`,
-        redirect_url:     `${process.env.APP_URL}/dashboard.html?payment=success&reference=${reference}`,
+        notification_url: `${process.env.BACKEND_URL || process.env.APP_URL}/api/payments/webhook`,
+        redirect_url:     `${process.env.FRONTEND_URL || process.env.APP_URL}/dashboard.html?payment=success&reference=${reference}`,
         narration:        `VAULTRA ${planData.label} activation`,
         channels:         ['card', 'bank_transfer', 'pay_with_bank']
       })
@@ -112,7 +112,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
       return res.status(400).json({ message: 'Invalid signature' });
     }
 
-    const event = JSON.parse(req.body);
+    const event = JSON.parse(req.body.toString('utf8'));
 
     if (event.event === 'charge.success') {
       const { reference, status } = event.data;

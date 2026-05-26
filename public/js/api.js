@@ -1,8 +1,18 @@
 /* ── VAULTRA API Client ──────────────────────────────────────
-   Single file handling all frontend ↔ backend communication
+   Works for both same-origin deployment and split deployment:
+   - Same-origin: API_BASE defaults to '' and requests go to /api/...
+   - Netlify + Render: set window.VAULTRA_API_BASE before this file loads,
+     or add ?api=https://your-backend.onrender.com for quick testing.
    ────────────────────────────────────────────────────────── */
 
+const VAULTRA_API_BASE = (() => {
+  const fromWindow = window.VAULTRA_API_BASE || window.API_BASE_URL || '';
+  const fromQuery = new URLSearchParams(window.location.search).get('api') || '';
+  return (fromQuery || fromWindow).replace(/\/$/, '');
+})();
+
 const API = {
+  baseUrl: VAULTRA_API_BASE,
 
   // ── Base request helper ────────────────────────────────────
   async request(method, endpoint, data) {
@@ -13,9 +23,11 @@ const API = {
     };
     if (data) opts.body = JSON.stringify(data);
 
-    const res  = await fetch('/api' + endpoint, opts);
-    const json = await res.json();
-    if (!json.success) throw new Error(json.message || 'Request failed');
+    const res = await fetch(`${API.baseUrl}/api${endpoint}`, opts);
+    const contentType = res.headers.get('content-type') || '';
+    const json = contentType.includes('application/json') ? await res.json() : { success: false, message: await res.text() };
+
+    if (!res.ok || !json.success) throw new Error(json.message || `Request failed (${res.status})`);
     return json;
   },
 
@@ -25,10 +37,10 @@ const API = {
 
   // ── Auth ───────────────────────────────────────────────────
   auth: {
-    signup: (data)  => API.post('/auth/signup',  data),
-    signin: (data)  => API.post('/auth/signin',  data),
-    signout:()      => API.post('/auth/signout'),
-    me:     ()      => API.get('/auth/me'),
+    signup:  (data) => API.post('/auth/signup',  data),
+    signin:  (data) => API.post('/auth/signin',  data),
+    signout: ()     => API.post('/auth/signout'),
+    me:      ()     => API.get('/auth/me'),
   },
 
   // ── Payments ───────────────────────────────────────────────
@@ -67,6 +79,6 @@ async function redirectIfLoggedIn(to = '/dashboard.html') {
   }
 }
 
-window.API            = API;
-window.requireAuth    = requireAuth;
+window.API = API;
+window.requireAuth = requireAuth;
 window.redirectIfLoggedIn = redirectIfLoggedIn;

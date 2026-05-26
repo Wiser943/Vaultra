@@ -18,7 +18,7 @@ router.get('/dashboard', protect, async (req, res) => {
       wallet:         user.wallet,
       directReferrals: user.directReferrals,
       referralCode:   user.referralCode,
-      referralLink:   `${process.env.APP_URL}/signup.html?ref=${user.referralCode}`
+      referralLink:   `${process.env.FRONTEND_URL || process.env.APP_URL}/signup.html?ref=${user.referralCode}`
     }
   });
 });
