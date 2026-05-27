@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const paymentSchema = new mongoose.Schema({
 
   user:        { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  plan:        { type: String, enum: ['sterling', 'sovereign'], required: true },
+  plan:        { type: String, enum: ['sterling', 'sovereign', 'lifestyle'], required: true },
 
   // Korapay fields
   reference:   { type: String, unique: true, required: true },

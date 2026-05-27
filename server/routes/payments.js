@@ -5,31 +5,12 @@ const { nanoid } = require('nanoid');
 const { protect } = require('../middleware/auth');
 const Payment  = require('../models/Payment');
 const User     = require('../models/User');
+const { activateUserAfterPayment, PLANS } = require('../utils/referralService');
 
 const router = express.Router();
 
-// Plan config
-const PLANS = {
-  sterling: {
-    label:       'Sterling Plan',
-    amountNaira: 7000,
-    vaultReward: 7000,    // ₦ welcome bonus
-  },
-  sovereign: {
-    label:       'Sovereign Plan',
-    amountNaira: 15000,
-    vaultReward: 15000,
-  }
-};
-
-// Referral bonus amounts (₦)
-const REFERRAL_BONUS = {
-  direct: { sterling: 2000,  sovereign: 4000  },  // level 1 — adjust once confirmed
-  level2: { sterling: 400,   sovereign: 800   },  // level 2
-};
-
 // ── POST /api/payments/initiate ──────────────────────────────
-// Creates a Korapay checkout and returns the payment URL
+// Creates a Korapay checkout for sterling/sovereign/lifestyle plans
 router.post('/initiate', protect, async (req, res) => {
   try {
     const { plan } = req.body;
@@ -37,8 +18,8 @@ router.post('/initiate', protect, async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid plan selected.' });
     }
 
-    // Don't allow double payment
-    if (req.user.status === 'verified') {
+    // Don't allow double payment for sterling/sovereign
+    if ((plan === 'sterling' || plan === 'sovereign') && req.user.status === 'verified') {
       return res.status(400).json({ success: false, message: 'Your account is already activated.' });
     }
 
@@ -62,7 +43,7 @@ router.post('/initiate', protect, async (req, res) => {
         },
         notification_url: `${process.env.BACKEND_URL || process.env.APP_URL}/api/payments/webhook`,
         redirect_url:     `${process.env.FRONTEND_URL || process.env.APP_URL}/dashboard.html?payment=success&reference=${reference}`,
-        narration:        `VAULTRA ${planData.label} activation`,
+        narration:        `VAULTRA ${planData.label}`,
         channels:         ['card', 'bank_transfer', 'pay_with_bank']
       })
     });
@@ -98,6 +79,7 @@ router.post('/initiate', protect, async (req, res) => {
 
 // ── POST /api/payments/webhook — Korapay webhook ─────────────
 // Korapay calls this URL when payment status changes
+// Instantly activates user upon successful payment
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   try {
     // Verify webhook signature
@@ -128,37 +110,14 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
       payment.verifiedAt  = new Date();
       await payment.save();
 
-      // Activate user account
+      // Activate user instantly
       const user = await User.findById(payment.user);
-      if (user && user.status !== 'verified') {
-        const planData = PLANS[payment.plan];
-
-        user.plan        = payment.plan;
-        user.status      = 'verified';
-        user.activatedAt = new Date();
-        user.wallet.vaultRewardNaira += planData.vaultReward;
-
-        // Credit referral bonuses
-        if (user.referredBy) {
-          const referrer = await User.findById(user.referredBy);
-          if (referrer) {
-            const bonus = REFERRAL_BONUS.direct[payment.plan] || 2000;
-            referrer.wallet.referralNaira += bonus;
-            referrer.directReferrals.addToSet(user._id);
-            await referrer.save({ validateBeforeSave: false });
-          }
+      if (user) {
+        try {
+          await activateUserAfterPayment(user, payment.plan);
+        } catch (activationErr) {
+          console.error('Error activating user after payment:', activationErr);
         }
-        if (user.referredByLevel2) {
-          const level2Referrer = await User.findById(user.referredByLevel2);
-          if (level2Referrer) {
-            const bonus = REFERRAL_BONUS.level2[payment.plan] || 400;
-            level2Referrer.wallet.referralNaira += bonus;
-            await level2Referrer.save({ validateBeforeSave: false });
-          }
-        }
-
-        await user.save({ validateBeforeSave: false });
-        console.log(`✅ User ${user.email} activated on ${payment.plan} plan`);
       }
     }
 

@@ -1,7 +1,7 @@
 {
   "name": "vaultra",
   "version": "1.0.0",
-  "description": "VAULTRA Investment Platform — Where Creativity Meets Wealth",
+  "description": "VAULTRA Investment Platform \u2014 Where Creativity Meets Wealth",
   "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js",
@@ -21,7 +21,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.3.4",
     "nanoid": "^3.3.7",
-    "node-fetch": "^2.7.0"
+    "node-fetch": "^2.7.0",
+    "resend": "^3.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
