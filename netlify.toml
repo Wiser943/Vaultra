@@ -5,11 +5,11 @@
 # Replace the URL below with your actual Render backend URL after deployment.
 # This keeps frontend code using /api/... and avoids many cross-site cookie problems.
 #
-# [[redirects]]
-#   from = "/api/*"
-#   to = "https://vaultra-zacl.onrender.com/api/:splat"
-#   status = 200
-#   force = true
+ [[redirects]]
+   from = "/api/*"
+   to = "https://vaultra-zacl.onrender.com/api/:splat"
+   status = 200
+   force = true
 
 [[headers]]
   for = "/*"
