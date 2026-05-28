@@ -4,8 +4,11 @@
 
 const CONFIG = {
     // API Configuration
-    API_BASE_URL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
-    
+    API_BASE_URL:
+        window.location.hostname === 'localhost'
+            ? 'http://localhost:5000/api'
+            : 'https://vaultra-zacl.onrender.com/api',
+
     // Local Storage Keys
     STORAGE_KEYS: {
         TOKEN: 'vaultra_admin_token',
