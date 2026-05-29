@@ -1,5 +1,5 @@
 [build]
-  publish = "public"
+  publish = "."
 
 # Option A (recommended while using cookies): proxy API calls from Netlify to Render.
 # Replace the URL below with your actual Render backend URL after deployment.
@@ -16,3 +16,7 @@
   [headers.values]
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+
+
+
+
