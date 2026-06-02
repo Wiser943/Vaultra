@@ -1,264 +1,291 @@
-# VAULTRA — Full Setup & Deployment Guide
-> Where Creativity Meets Wealth
+# VAULTRA - Earn Euros from Your Creativity
 
----
+A full-stack web application where Nigerian creators can earn €2/hour across 6 simultaneous task streams, with a powerful 2-level referral system, Korapay payment integration, and direct bank withdrawals.
+
+## 🎯 Features
+
+✅ **User Authentication** — Signup with referral code capture, signin, JWT-based sessions
+✅ **2-Level Referral System** — Earn ₦2,000-₦4,000 per direct referral, ₦400-₦800 per indirect
+✅ **Korapay Payment Integration** — Sterling (₦7,000) and Sovereign (₦15,000) plans
+✅ **6 Task Streams** — Vault Lifestyle, Realtime, FaceTime, Works, Lingua, Script2Cash
+✅ **Bank Account Management** — Add multiple Nigerian bank accounts
+✅ **Email Verification** — Resend-powered verification codes for withdrawals
+✅ **Real-time Dashboard** — Wallet, referrals, task streams, withdrawal history
+✅ **Mobile-Responsive UI** — Dark gold-and-deep-purple theme, fully responsive
+
+## 📋 Tech Stack
+
+- **Frontend**: HTML5, CSS3, Vanilla JavaScript (no frameworks)
+- **Backend**: Node.js + Express.js
+- **Database**: MongoDB
+- **Payments**: Korapay API
+- **Email**: Resend API
+- **Authentication**: JWT
+- **Deployment**: Render, Railway, or Heroku
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 16+
+- MongoDB (local or cloud)
+- Korapay account (korapay.com)
+- Resend account (resend.com)
+
+### Installation
+
+1. **Clone/Extract the project**
+   ```bash
+   cd vaultra-vanilla
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Create `.env` file**
+   ```bash
+   cp .env.example .env
+   ```
+
+4. **Update `.env` with your credentials**
+   ```
+   MONGODB_URI=mongodb+srv://user:password@cluster.mongodb.net/vaultra
+   JWT_SECRET=your-super-secret-key
+   KORAPAY_PUBLIC_KEY=your-korapay-public-key
+   KORAPAY_SECRET_KEY=your-korapay-secret-key
+   RESEND_API_KEY=your-resend-api-key
+   BACKEND_URL=http://localhost:3000
+   FRONTEND_URL=http://localhost:5000
+   ```
+
+5. **Start the server**
+   ```bash
+   npm run dev
+   ```
+
+6. **Open in browser**
+   ```
+   http://localhost:3000
+   ```
 
 ## 📁 Project Structure
 
 ```
-vaultra/
-├── server/
-│   ├── index.js              ← Express app entry point
-│   ├── models/
-│   │   ├── User.js           ← User schema (plans, wallet, referrals)
-│   │   ├── Payment.js        ← Korapay payment records
-│   │   └── Withdrawal.js     ← Withdrawal requests
-│   ├── routes/
-│   │   ├── auth.js           ← Signup, signin, signout
-│   │   ├── payments.js       ← Korapay initiate + webhook
-│   │   ├── user.js           ← Dashboard, bank, withdraw
-│   │   └── admin.js          ← Manual verification panel
-│   └── middleware/
-│       └── auth.js           ← JWT protect, adminOnly
+vaultra-vanilla/
+├── server.js                 # Main Express server
+├── models/
+│   ├── User.js              # User schema with referrals
+│   ├── Payment.js           # Payment records
+│   └── Withdrawal.js        # Withdrawal requests
+├── routes/
+│   ├── auth.js              # Authentication endpoints
+│   ├── payments.js          # Payment & Korapay integration
+│   ├── withdrawals.js       # Withdrawal & bank management
+│   ├── dashboard.js         # Dashboard stats
+│   └── webhook.js           # Korapay webhook handler
+├── middleware/
+│   └── auth.js              # JWT authentication
+├── utils/
+│   └── email.js             # Resend email service
 ├── public/
-│   ├── index.html            ← Landing page
-│   ├── signin.html           ← Sign in
-│   ├── signup.html           ← Sign up
-│   ├── dashboard.html        ← User dashboard
-│   ├── about.html            ← About page
+│   ├── index.html           # Single-page app
 │   ├── css/
-│   │   ├── styles.css
-│   │   ├── dashboard.css
-│   │   └── auth.css
+│   │   └── style.css        # Dark gold-purple theme
 │   └── js/
-│       ├── api.js            ← API client (all fetch calls)
-│       ├── auth.js           ← Signup/signin form logic
-│       ├── dashboard.js      ← Dashboard logic
-│       └── main.js           ← Landing page JS
-├── config/
-│   └── db.js                 ← MongoDB connection
-├── .env.example              ← Environment variables template
-├── .gitignore
-├── package.json
-├── render.yaml               ← Render deployment config
-└── README.md
+│       └── app.js           # Frontend logic
+└── .env.example             # Environment template
 ```
 
----
+## 🔌 API Endpoints
 
-## ⚙️ STEP 1 — MongoDB Atlas Setup
+### Authentication
+- `POST /api/auth/signup` — Create account with referral code
+- `POST /api/auth/signin` — Login with email/password
+- `GET /api/auth/profile` — Get user profile
 
-1. Go to **https://cloud.mongodb.com**
-2. Sign in → click your cluster → **Connect**
-3. Choose **Drivers** → Node.js
-4. Copy the connection string — looks like:
-   ```
-   mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/
-   ```
-5. Replace `<password>` with your actual password
-6. Add `/vaultra` before the `?` so it becomes:
-   ```
-   mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/vaultra?retryWrites=true&w=majority
-   ```
-7. In Atlas → **Network Access** → **Add IP Address** → choose **Allow Access from Anywhere** (0.0.0.0/0) — required for Render
+### Payments
+- `POST /api/payments/initiate` — Start Korapay checkout
+- `POST /api/payments/verify/:reference` — Verify payment
+- `POST /api/payments/webhook` — Korapay callback
 
----
+### Withdrawals
+- `POST /api/withdrawals/initiate` — Start withdrawal with email verification
+- `POST /api/withdrawals/verify` — Verify email code and process withdrawal
+- `GET /api/withdrawals/history` — Get withdrawal history
+- `POST /api/withdrawals/add-bank` — Add bank account
 
-## 💳 STEP 2 — Korapay Setup
+### Dashboard
+- `GET /api/dashboard/stats` — Get wallet, referrals, streams, withdrawals
 
-1. Go to **https://merchant.korapay.com**
-2. Sign in → **Settings** → **API Keys**
-3. Copy:
-   - **Public Key** (starts with `pk_live_...`)
-   - **Secret Key** (starts with `sk_live_...`)
-   - **Encryption Key**
-4. Go to **Settings** → **Webhooks**
-5. Add webhook URL:
-   ```
-   https://vaultra.onrender.com/api/payments/webhook
-   ```
-6. Select event: `charge.success`
-7. Save
+## 💰 Payment Plans
 
----
+| Plan | Amount | Welcome Bonus | L1 Referral | L2 Referral |
+|------|--------|---------------|-------------|-------------|
+| **Sterling** | ₦7,000 | ₦7,000 | ₦2,000 | ₦400 |
+| **Sovereign** | ₦15,000 | ₦15,000 | ₦4,000 | ₦800 |
 
-## 💻 STEP 3 — Local Setup (on your phone/computer)
+## 🤝 Referral System
 
-### Install Node.js
-If not installed: **https://nodejs.org** → download LTS version
+- **Level 1**: Direct referrals you invite
+- **Level 2**: Referrals of your Level 1 referrals
+- Bonuses credited **instantly** upon payment completion
+- Track earnings in real-time on dashboard
 
-### Clone / create project folder
+## 🏦 Withdrawal Flow
+
+1. User initiates withdrawal with EUR amount
+2. Verification code sent to email via Resend
+3. User enters code to confirm
+4. Balance deducted, withdrawal marked "processing"
+5. Processed to bank account within 24-48 hours
+
+## 🔐 Security
+
+- Passwords hashed with bcryptjs
+- JWT tokens for session management
+- Email verification for withdrawals
+- Bank account validation
+- CORS protection
+- Environment variables for secrets
+
+## 🎨 UI/UX
+
+- **Color Scheme**: Deep Purple (#1a0f2e) + Dark Gold (#c9a84c) + Emerald Green (#10b981)
+- **Mobile-First**: Fully responsive design
+- **Animations**: Smooth transitions and hover effects
+- **Accessibility**: Semantic HTML, keyboard navigation
+
+## 📱 Pages
+
+1. **Landing Page** — Hero, features, pricing
+2. **Signup** — Create account with referral code
+3. **Signin** — Login with email/password
+4. **Dashboard** — Wallet, referrals, streams, withdrawals
+5. **Payment** — Choose and activate plan
+6. **Withdrawal** — Initiate withdrawal with email verification
+7. **Bank Management** — Add and manage bank accounts
+
+## 🚀 Deployment
+
+### Render
+
+1. Push code to GitHub
+2. Create new Web Service on Render
+3. Connect GitHub repository
+4. Set environment variables
+5. Deploy
+
+### Railway
+
+1. Connect GitHub
+2. Create new project
+3. Add MongoDB plugin
+4. Set environment variables
+5. Deploy
+
+### Heroku
+
 ```bash
-# If using GitHub (recommended):
-git clone https://github.com/YOUR_USERNAME/vaultra.git
-cd vaultra
-
-# Or just create the folder and paste all files in
+heroku create vaultra-app
+heroku config:set MONGODB_URI=your-mongodb-uri
+heroku config:set JWT_SECRET=your-secret
+heroku config:set KORAPAY_SECRET_KEY=your-key
+git push heroku main
 ```
 
-### Install dependencies
-```bash
-npm install
+## 🔧 Environment Variables
+
+```
+PORT=3000
+NODE_ENV=development
+MONGODB_URI=mongodb://localhost:27017/vaultra
+JWT_SECRET=your-super-secret-jwt-key
+KORAPAY_PUBLIC_KEY=your-korapay-public-key
+KORAPAY_SECRET_KEY=your-korapay-secret-key
+RESEND_API_KEY=your-resend-api-key
+BACKEND_URL=http://localhost:3000
+FRONTEND_URL=http://localhost:5000
 ```
 
-### Create your .env file
-```bash
-# Copy the example file
-cp .env.example .env
-```
-Then open `.env` and fill in your real values:
-```
-MONGODB_URI=mongodb+srv://...your actual string...
-JWT_SECRET=any-long-random-string-minimum-32-chars
-KORAPAY_PUBLIC_KEY=pk_live_...
-KORAPAY_SECRET_KEY=sk_live_...
-KORAPAY_ENCRYPTION_KEY=...
-APP_URL=http://localhost:3000
-ADMIN_SECRET=your-admin-password
-```
+## 📊 Database Schema
 
-### Run locally
-```bash
-npm run dev
-```
-Open browser: **http://localhost:3000**
+### Users
+- Basic info (name, email, phone, niche)
+- Referral tracking (code, referredBy, level1/2 referrals)
+- Wallet (EUR and Naira balances)
+- Referral earnings (level 1 & 2)
+- Plan status and unlocked streams
+- Bank accounts
+
+### Payments
+- User reference
+- Plan type and amounts
+- Korapay reference and checkout URL
+- Status and webhook data
+- Referral bonus tracking
+
+### Withdrawals
+- User and amount
+- Bank details
+- Email verification code
+- Status (pending → processing → completed)
+- Reference number
+
+## 🧪 Testing
+
+### Manual Testing Checklist
+
+- [ ] Signup with referral code
+- [ ] Signin with credentials
+- [ ] Select and activate plan (Sterling/Sovereign)
+- [ ] Verify payment with Korapay
+- [ ] Check referral bonuses credited
+- [ ] Add bank account
+- [ ] Initiate withdrawal
+- [ ] Verify email code
+- [ ] Check withdrawal history
+- [ ] Copy referral link
+- [ ] Mobile responsiveness
+
+## 🐛 Troubleshooting
+
+**MongoDB Connection Error**
+- Ensure MongoDB is running or connection string is correct
+- Check network access if using MongoDB Atlas
+
+**Korapay Payment Failed**
+- Verify API keys are correct
+- Check webhook URL is accessible
+- Ensure BACKEND_URL is set correctly
+
+**Email Not Sending**
+- Verify Resend API key is valid
+- Check email domain is verified in Resend
+- Review email logs in Resend dashboard
+
+**Frontend Not Loading**
+- Ensure server is running on port 3000
+- Check browser console for errors
+- Verify CORS is enabled
+
+## 📞 Support
+
+For issues or questions:
+1. Check the troubleshooting section
+2. Review API logs
+3. Check MongoDB for data integrity
+4. Verify all environment variables are set
+
+## 📄 License
+
+MIT License - feel free to use and modify
+
+## 🙏 Credits
+
+Built with Node.js, Express, MongoDB, Korapay, and Resend.
 
 ---
 
-## 🚀 STEP 4 — GitHub Setup
-
-> This is how you get code from your phone to Render
-
-### First time
-```bash
-git init
-git add .
-git commit -m "Initial VAULTRA commit"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/vaultra.git
-git push -u origin main
-```
-
-### Every update after
-```bash
-git add .
-git commit -m "describe what you changed"
-git push
-```
-Render will **auto-deploy** every time you push to GitHub.
-
----
-
-## 🌐 STEP 5 — Deploy on Render
-
-1. Go to **https://render.com** → Sign in
-2. Click **New** → **Web Service**
-3. Connect your GitHub → select the **vaultra** repo
-4. Fill in:
-   - **Name**: `vaultra`
-   - **Runtime**: `Node`
-   - **Build Command**: `npm install`
-   - **Start Command**: `npm start`
-   - **Instance Type**: Free
-5. Scroll to **Environment Variables** → add each one:
-   ```
-   NODE_ENV          = production
-   MONGODB_URI       = (your Atlas string)
-   JWT_SECRET        = (your secret)
-   KORAPAY_PUBLIC_KEY = (your key)
-   KORAPAY_SECRET_KEY = (your key)
-   KORAPAY_ENCRYPTION_KEY = (your key)
-   KORAPAY_BASE_URL  = https://api.korapay.com/merchant/api/v1
-   APP_URL           = https://vaultra.onrender.com
-   ADMIN_SECRET      = (your admin password)
-   STERLING_PRICE_KOBO = 700000
-   SOVEREIGN_PRICE_KOBO = 1500000
-   ```
-6. Click **Create Web Service**
-7. Wait ~3 minutes for first deploy
-8. Your site is live at: **https://vaultra.onrender.com**
-
----
-
-## 👑 STEP 6 — Create Your Admin Account
-
-After deploying, sign up normally on the site, then run this **once** in MongoDB Atlas → Collections → Users:
-
-Find your user document and update:
-```json
-{ "$set": { "isAdmin": true } }
-```
-
-Or use MongoDB Compass if you prefer a GUI.
-
----
-
-## 🔑 Admin Panel API
-
-All admin routes require your account to have `isAdmin: true`.
-
-| Method | Route | What it does |
-|--------|-------|--------------|
-| GET  | `/api/admin/stats` | Platform stats |
-| GET  | `/api/admin/users` | All users (filter by status/plan) |
-| POST | `/api/admin/verify/:userId` | Manually activate a user |
-| GET  | `/api/admin/payments` | All payment records |
-| GET  | `/api/admin/withdrawals` | Pending withdrawals |
-| POST | `/api/admin/withdrawals/:id/process` | Mark withdrawal done |
-
-Example — manually verify a user:
-```bash
-curl -X POST https://vaultra.onrender.com/api/admin/verify/USER_ID \
-  -H "Content-Type: application/json" \
-  -H "Cookie: vaultra_token=YOUR_ADMIN_TOKEN" \
-  -d '{"plan":"sterling"}'
-```
-
----
-
-## 💰 Referral Commission Structure
-
-Currently set in `server/routes/payments.js`:
-
-```js
-const REFERRAL_BONUS = {
-  direct: { sterling: 2000,  sovereign: 4000  },  // ₦ Level 1 (direct referral)
-  level2: { sterling: 400,   sovereign: 800   },  // ₦ Level 2 (indirect)
-};
-```
-
-**Update these numbers** once you confirm your percentages.
-
----
-
-## 🛠️ Common Issues
-
-**"Cannot connect to MongoDB"**
-→ Check your MONGODB_URI is correct and Atlas Network Access allows 0.0.0.0/0
-
-**"Payment webhook not firing"**
-→ Make sure your Render URL is saved in Korapay webhook settings exactly as:
-`https://vaultra.onrender.com/api/payments/webhook`
-
-**"Site sleeping on Render free tier"**
-→ Free Render services sleep after 15 mins of inactivity. Use **UptimeRobot** (free) to ping your site every 10 minutes:
-1. Go to https://uptimerobot.com
-2. Add monitor → HTTP → `https://vaultra.onrender.com`
-3. Set interval: 5 minutes
-
-**JWT token issues**
-→ Make sure JWT_SECRET is the same value across all deployments
-
----
-
-## 📞 Support Flow
-
-When a user pays manually and needs verification:
-1. They send payment proof to your WhatsApp/Telegram
-2. You find their user ID in MongoDB Atlas
-3. Call `POST /api/admin/verify/:userId` with `{ "plan": "sterling" }` or `"sovereign"`
-4. Their account activates instantly
-
----
-
-*VAULTRA — Where Creativity Meets Wealth* 🔱
+**Ready to launch?** Follow the deployment guide above and go live! 🚀
