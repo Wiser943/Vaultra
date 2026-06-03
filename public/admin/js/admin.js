@@ -7,7 +7,7 @@ let currentWithdrawalPage = 1;
 let currentWithdrawalId = null;
 
 // Change this to your production backend URL (e.g., https://your-backend.onrender.com/api)
-const PROD_API_URL = 'https://vaultra-backend.onrender.com/api'; 
+const PROD_API_URL = 'https://vaultra-zacl.onrender.com/api'; 
 
 const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? 'http://localhost:3000/api'
